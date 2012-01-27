@@ -10,12 +10,12 @@ except ImportError:
     from setuptools.command.test import test
 
 setup(
-    name='django-modeldict',
+    name='modeldict',
     version='1.1.6',
     author='DISQUS',
     author_email='opensource@disqus.com',
-    url='http://github.com/disqus/django-modeldict/',
-    description = 'Stores a model as a dictionary',
+    url='http://github.com/disqus/modeldict/',
+    description = 'Dictionary-style access to different types of models.',
     packages=find_packages(),
     zip_safe=False,
     tests_require=[

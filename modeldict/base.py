@@ -4,6 +4,7 @@ from django.core.cache import cache
 
 NoValue = object()
 
+
 class CachedDict(object):
     def __init__(self, cache=cache):
         self._cache = None
@@ -116,4 +117,3 @@ class CachedDict(object):
 
     def get_default(self, value):
         return NoValue
-

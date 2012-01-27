@@ -1,5 +1,6 @@
 from django.conf.urls.defaults import *
 
+
 def dummy_view(request):
     from django.http import HttpResponse
     return HttpResponse()

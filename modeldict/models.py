@@ -3,6 +3,7 @@ from django.core.signals import request_finished
 
 from modeldict.base import CachedDict, NoValue
 
+
 class ModelDict(CachedDict):
     """
     Dictionary-style access to a model. Populates a cache and a local in-memory
@@ -68,8 +69,7 @@ class ModelDict(CachedDict):
             self._populate(reset=True)
 
     def __delitem__(self, key):
-        affected = self.model._default_manager.filter(**{self.key: key}).delete()
-        # self._populate(reset=True)
+        self.model._default_manager.filter(**{self.key: key}).delete()
 
     def setdefault(self, key, value):
         if isinstance(value, self.model):

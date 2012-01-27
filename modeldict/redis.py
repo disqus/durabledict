@@ -2,6 +2,7 @@ from django.core.signals import request_finished
 
 from modeldict.base import CachedDict
 
+
 class RedisDict(CachedDict):
     """
     Dictionary-style access to a redis hash table. Populates a cache and a local

@@ -6,4 +6,4 @@ try:
 except Exception, e:
     VERSION = 'unknown'
 
-from modeldict.models import ModelDict
+from modeldict.dict import ModelDict

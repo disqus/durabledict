@@ -1,10 +1,7 @@
-from django.db.models.signals import post_save, post_delete
-from django.core.signals import request_finished
-
-from modeldict.base import CachedDict, NoValue
+from modeldict.base import PersistedDict, NoValue
 
 
-class RedisDict(CachedDict):
+class RedisDict(PersistedDict):
     """
     Dictionary-style access to a redis hash table. Populates a cache and a local
     in-memory to avoid multiple hits to the database.
@@ -17,15 +14,13 @@ class RedisDict(CachedDict):
 
     """
     def __init__(self, keyspace, connection, *args, **kwargs):
-        super(CachedDict, self).__init__(*args, **kwargs)
+        super(PersistedDict, self).__init__(*args, **kwargs)
 
         self.keyspace = keyspace
         self.conn = connection
 
         self.cache_key = 'RedisDict:%s' % (keyspace,)
         self.last_updated_cache_key = 'RedisDict.last_updated:%s' % (keyspace,)
-
-        request_finished.connect(self._cleanup)
 
     def __setitem__(self, key, value):
         self.conn.hset(self.keyspace, key, value)
@@ -42,7 +37,7 @@ class RedisDict(CachedDict):
         return self.conn.hgetall(self.keyspace)
 
 
-class ModelDict(CachedDict):
+class ModelDict(PersistedDict):
     """
     Dictionary-style access to a model. Populates a cache and a local in-memory
     to avoid multiple hits to the database.
@@ -84,10 +79,6 @@ class ModelDict(CachedDict):
 
         self.cache_key = 'ModelDict:%s:%s' % (model.__name__, self.key)
         self.last_updated_cache_key = 'ModelDict.last_updated:%s:%s' % (model.__name__, self.key)
-
-        request_finished.connect(self._cleanup)
-        post_save.connect(self._post_save, sender=model)
-        post_delete.connect(self._post_delete, sender=model)
 
     def __setitem__(self, key, value):
         if isinstance(value, self.model):

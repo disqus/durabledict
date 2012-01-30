@@ -1,10 +1,8 @@
-from django.db.models.signals import post_save, post_delete
-from django.core.signals import request_finished
-
-from modeldict.base import CachedDict, NoValue
+from modeldict.base import PersistedDict
+import time
 
 
-class RedisDict(CachedDict):
+class RedisDict(PersistedDict):
     """
     Dictionary-style access to a redis hash table. Populates a cache and a local
     in-memory to avoid multiple hits to the database.
@@ -17,32 +15,38 @@ class RedisDict(CachedDict):
 
     """
     def __init__(self, keyspace, connection, *args, **kwargs):
-        super(CachedDict, self).__init__(*args, **kwargs)
-
         self.keyspace = keyspace
         self.conn = connection
+        super(RedisDict, self).__init__(*args, **kwargs)
+        self.__touch_last_updated()
 
-        self.cache_key = 'RedisDict:%s' % (keyspace,)
-        self.last_updated_cache_key = 'RedisDict.last_updated:%s' % (keyspace,)
+    def persist(self, key, val):
+        self.__touch_last_update_and('hset', self.keyspace, key, val)
 
-        request_finished.connect(self._cleanup)
+    def depersist(self, key):
+        self.__touch_last_update_and('hdel', self.keyspace, key)
 
-    def __setitem__(self, key, value):
-        self.conn.hset(self.keyspace, key, value)
-        if value != self._cache.get(key):
-            self._cache[key] = value
-        self._populate(reset=True)
-
-    def __delitem__(self, key):
-        self.conn.hdel(self.keyspace, key)
-        self._cache.pop(key)
-        self._populate(reset=True)
-
-    def _get_cache_data(self):
+    def persistants(self):
         return self.conn.hgetall(self.keyspace)
 
+    def last_updated(self):
+        return int(self.conn.get(self.__last_update_key) or 0)
 
-class ModelDict(CachedDict):
+    def __touch_last_updated(self):
+        return self.conn.incr(self.__last_update_key)
+
+    def __touch_last_update_and(self, method, *args, **kwargs):
+        with self.conn.pipeline() as pipe:
+            getattr(pipe, method)(*args, **kwargs)
+            pipe.incr(self.__last_update_key)
+            pipe.execute()
+
+    @property
+    def __last_update_key(self):
+        return self.keyspace + 'last_updated'
+
+
+class ModelDict(PersistedDict):
     """
     Dictionary-style access to a model. Populates a cache and a local in-memory
     to avoid multiple hits to the database.
@@ -84,10 +88,6 @@ class ModelDict(CachedDict):
 
         self.cache_key = 'ModelDict:%s:%s' % (model.__name__, self.key)
         self.last_updated_cache_key = 'ModelDict.last_updated:%s:%s' % (model.__name__, self.key)
-
-        request_finished.connect(self._cleanup)
-        post_save.connect(self._post_save, sender=model)
-        post_delete.connect(self._post_delete, sender=model)
 
     def __setitem__(self, key, value):
         if isinstance(value, self.model):

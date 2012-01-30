@@ -1,4 +1,4 @@
-from modeldict.base import PersistedDict, NoValue
+from modeldict.base import PersistedDict
 
 
 class RedisDict(PersistedDict):
@@ -14,26 +14,17 @@ class RedisDict(PersistedDict):
 
     """
     def __init__(self, keyspace, connection, *args, **kwargs):
-        super(PersistedDict, self).__init__(*args, **kwargs)
-
         self.keyspace = keyspace
         self.conn = connection
+        super(RedisDict, self).__init__(*args, **kwargs)
 
-        self.cache_key = 'RedisDict:%s' % (keyspace,)
-        self.last_updated_cache_key = 'RedisDict.last_updated:%s' % (keyspace,)
+    def _persist(self, key, val):
+        self.conn.hset(self.keyspace, key, val)
 
-    def __setitem__(self, key, value):
-        self.conn.hset(self.keyspace, key, value)
-        if value != self._cache.get(key):
-            self._cache[key] = value
-        self._populate(reset=True)
-
-    def __delitem__(self, key):
+    def _depersist(self, key):
         self.conn.hdel(self.keyspace, key)
-        self._cache.pop(key)
-        self._populate(reset=True)
 
-    def _get_cache_data(self):
+    def _persistants(self):
         return self.conn.hgetall(self.keyspace)
 
 

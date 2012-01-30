@@ -23,3 +23,9 @@ class TestCachedDict(unittest.TestCase):
         with mock.patch('modeldict.base.PersistedDict._depersist') as dp:
             del self.dict['foo']
             dp.assert_called_with('foo')
+
+    def test_uses_persistants_on_initialize(self):
+        with mock.patch('modeldict.base.PersistedDict._persistants') as p:
+            p.return_value = dict(a=1, b=2, c=3)
+            tester = PersistedDict()
+            self.assertEquals(tester, dict(a=1, b=2, c=3))

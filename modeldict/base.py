@@ -1,6 +1,3 @@
-NoValue = object()
-
-
 class PersistedDict(dict):
     """
     Dictionary that calls out to its persistant data store when items are
@@ -8,8 +5,7 @@ class PersistedDict(dict):
     """
 
     def __init__(self):
-        self._cache_stale = None
-        self._last_updated = None
+        self.update(self._persistants())
 
     def __setitem__(self, key, val):
         self._persist(key, val)
@@ -24,3 +20,6 @@ class PersistedDict(dict):
 
     def _depersist(self, key):
         pass
+
+    def _persistants(self):
+        return self.copy()

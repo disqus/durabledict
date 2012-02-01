@@ -101,7 +101,6 @@ class TestRedisDict(BaseTest, unittest.TestCase):
     def test_last_updated_set_when_persisted(self):
         before = self.dict.last_updated()
 
-        time.sleep(0.01)
         self.dict.persist('foo', 'bar')
         self.assertTrue(self.dict.last_updated() > before)
 
@@ -109,7 +108,6 @@ class TestRedisDict(BaseTest, unittest.TestCase):
         self.dict.persist('foo', 'bar')
         before = self.dict.last_updated()
 
-        time.sleep(0.01)
         self.dict.depersist('foo')
         self.assertTrue(self.dict.last_updated() > before)
 

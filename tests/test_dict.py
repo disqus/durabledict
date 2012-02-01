@@ -11,6 +11,7 @@ import mock
 import time
 
 import django.core.management
+from django.core.cache.backends.locmem import LocMemCache
 
 
 class BaseTest(object):
@@ -24,7 +25,21 @@ class BaseTest(object):
 
     def test_acts_like_a_dictionary(self):
         self.dict['foo'] = 'bar'
-        self.assertTrue(self.dict['foo'], 'bar')
+        self.assertEquals(self.dict['foo'], 'bar')
+        self.dict['foo2'] = 'bar2'
+        self.assertEquals(self.dict['foo2'], 'bar2')
+
+    def test_updates_dict_keys(self):
+        self.dict['foo'] = 'bar'
+        self.assertEquals(self.dict['foo'], 'bar')
+        self.dict['foo'] = 'newbar'
+        self.assertEquals(self.dict['foo'], 'newbar')
+
+    def test_raises_keyerror_on_bad_access(self):
+        self.dict['foo'] = 'bar'
+        self.dict.__getitem__('foo')
+        del self.dict['foo']
+        self.assertRaises(KeyError, self.dict.__getitem__, 'foo')
 
     def test_setitem_calls_persist_with_value(self):
         with mock.patch(self.mockmeth('persist')) as pv:
@@ -61,6 +76,21 @@ class BaseTest(object):
                 len(self.dict)
                 self.assertEquals(self.dict, dict(updated='persistants'))
 
+    def test_last_updated_setup_on_intialize(self):
+        self.assertTrue(self.dict.last_updated())
+
+    def test_last_updated_set_when_persisted(self):
+        before = self.dict.last_updated()
+
+        self.dict.persist('foo', 'bar')
+        self.assertTrue(self.dict.last_updated() > before)
+
+    def test_last_updated_set_when_depersisted(self):
+        self.dict.persist('foo', 'bar')
+        before = self.dict.last_updated()
+
+        self.dict.depersist('foo')
+        self.assertTrue(self.dict.last_updated() > before)
 
 class TestRedisDict(BaseTest, unittest.TestCase):
 
@@ -95,21 +125,8 @@ class TestRedisDict(BaseTest, unittest.TestCase):
 
         self.assertEquals(new_dict.persistants(), dict(foo='bar', baz='bang'))
 
-    def test_last_updated_set_on_initialize(self):
+    def test_last_updated_set_to_1_on_initialize(self):
         self.assertEquals(self.dict.last_updated(), 1)
-
-    def test_last_updated_set_when_persisted(self):
-        before = self.dict.last_updated()
-
-        self.dict.persist('foo', 'bar')
-        self.assertTrue(self.dict.last_updated() > before)
-
-    def test_last_updated_set_when_depersisted(self):
-        self.dict.persist('foo', 'bar')
-        before = self.dict.last_updated()
-
-        self.dict.depersist('foo')
-        self.assertTrue(self.dict.last_updated() > before)
 
     def test_persists_and_last_update_writes_are_atomic(self):
         with mock.patch('redis.Redis.incr') as tlo:
@@ -120,13 +137,38 @@ class TestRedisDict(BaseTest, unittest.TestCase):
 
 class TestModelDict(BaseTest, unittest.TestCase):
 
+    @property
+    def cache(self):
+        return LocMemCache('test', {})
+
     def new_dict(self):
-        return ModelDict(Setting.objects, key_col='key')
+        return ModelDict(Setting.objects, key_col='key', cache=self.cache)
 
     def setUp(self):
         self.dict = self.new_dict()
         django.core.management.call_command('syncdb')
 
+    def tearDown(self):
+        django.core.management.call_command('flush', interactive=False)
+        self.dict.cache.clear()
+
     def test_persist_saves_model(self):
         self.dict.persist('foo', 'bar')
         self.assertTrue(Setting.objects.get(key='foo'), 'bar')
+
+    def test_depersist_removes_model(self):
+        self.dict.persist('foo', 'bar')
+        self.assertTrue(Setting.objects.get(key='foo'), 'bar')
+        self.dict.depersist('foo')
+        self.assertRaises(Setting.DoesNotExist, Setting.objects.get, key='foo')
+
+    def test_persistants_returns_dict_of_models_in_db(self):
+        self.dict.persist('foo', 'bar')
+        self.dict.persist('buzz', 'bang')
+        self.assertEquals(self.dict.persistants(), dict(foo='bar', buzz='bang'))
+
+    def test_last_updated_set_to_1_on_initialize(self):
+        self.assertEquals(self.dict.last_updated(), 1)
+
+    def test_changes_to_last_updated_are_atomic(self):
+        pass

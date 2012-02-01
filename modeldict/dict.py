@@ -75,23 +75,39 @@ class ModelDict(PersistedDict):
         mydict['test']
         >>> 'bar' #doctest: +SKIP
 
+    The constructor also takes a cache keyword argument, which is an object that
+    responds to two methods, add and incr.  The cache object is used to manage
+    the value for last_updated.  ``add`` is called on initialize to create the
+    key if it does not exist with the default value, and ``incr`` is done to
+    atomically update the last_updated value.
+
     """
 
-    def __init__(self, manager, key_col='key', value_col='value'):
+    def __init__(self, manager, cache, key_col='key', value_col='value'):
         self.manager = manager
+        self.cache = cache
+        self.cache_key = 'last_updated'
         self.key_col = key_col
         self.value_col = value_col
-        self.last_changed = 1
+        self.cache.add(self.cache_key, 1) # Only adds if key does not exist
         super(ModelDict, self).__init__()
 
 
     def persist(self, key, val):
-        self.manager.get_or_create(**{self.key_col: key, self.value_col: val})
-        self.last_changed += 1
+        instance, created = self.manager.get_or_create(
+            defaults={self.value_col: val},
+            **{self.key_col: key}
+        )
+
+        if not created and getattr(instance, self.value_col) != val:
+            setattr(instance, self.value_col, val)
+            instance.save()
+
+        self.__touch_last_updated()
 
     def depersist(self, key):
         self.manager.get(**{self.key_col: key}).delete()
-        self.last_changed += 1
+        self.__touch_last_updated()
 
     def persistants(self):
         return dict(
@@ -99,7 +115,10 @@ class ModelDict(PersistedDict):
         )
 
     def last_updated(self):
-        return self.last_changed
+        return self.cache.get(self.cache_key)
+
+    def __touch_last_updated(self):
+        self.cache.incr('last_updated')
 
     # def __init__(self, model, key='pk', value=None, instances=False, auto_create=False, *args, **kwargs):
     #     assert value is not None

@@ -59,91 +59,118 @@ class ModelDict(PersistedDict):
 
     Functions in two different ways, depending on the constructor:
 
-        # Given ``Model`` that has a column named ``foo`` where the value is "bar":
+        # Given ``Model`` that has a column named ``foo`` where the value at
+        # that column is "bar":
 
-        mydict = ModelDict(Model, value='foo')
+        mydict = ModelDict(Model, value_col='foo')
         mydict['test']
         >>> 'bar' #doctest: +SKIP
 
-    If you want to use another key besides ``pk``, you may specify that in the
-    constructor. However, this will be used as part of the cache key, so it's recommended
-    to access it in the same way throughout your code.
+    If you want to use another key in the ModelDict besides the ``Model``s
+    ``pk``, you may specify that in the constructor with ``key_col``.  For
+    instance, if your ``Model`` has a column called ``id``, you can index into
+    that column by passing ``key_col='id'`` in to the contructor:
 
-        mydict = ModelDict(Model, key='foo', value='id')
-        mydict['bar']
-        >>> 'test' #doctest: +SKIP
+        mydict = ModelDict(Model, key_col='id', value_col='foo')
+        mydict['test']
+        >>> 'bar' #doctest: +SKIP
 
     """
-    def __init__(self, model, key='pk', value=None, instances=False, auto_create=False, *args, **kwargs):
-        assert value is not None
 
-        super(ModelDict, self).__init__(*args, **kwargs)
+    def __init__(self, manager, key_col='key', value_col='value'):
+        self.manager = manager
+        self.key_col = key_col
+        self.value_col = value_col
+        self.last_changed = 1
+        super(ModelDict, self).__init__()
 
-        self.key = key
-        self.value = value
 
-        self.model = model
-        self.instances = instances
-        self.auto_create = auto_create
+    def persist(self, key, val):
+        self.manager.get_or_create(**{self.key_col: key, self.value_col: val})
+        self.last_changed += 1
 
-        self.cache_key = 'ModelDict:%s:%s' % (model.__name__, self.key)
-        self.last_updated_cache_key = 'ModelDict.last_updated:%s:%s' % (model.__name__, self.key)
+    def depersist(self, key):
+        self.manager.get(**{self.key_col: key}).delete()
+        self.last_changed += 1
 
-    def __setitem__(self, key, value):
-        if isinstance(value, self.model):
-            value = getattr(value, self.value)
-        instance, created = self.model._default_manager.get_or_create(
-            defaults={self.value: value},
-            **{self.key: key}
+    def persistants(self):
+        return dict(
+            self.manager.values_list(self.key_col, self.value_col)
         )
 
-        # Ensure we're updating the value in the database if it changes, and
-        # if it was frehsly created, we need to ensure we populate our cache.
-        if getattr(instance, self.value) != value:
-            # post_save hook hits so we dont need to populate
-            setattr(instance, self.value, value)
-            instance.save()
-        elif created:
-            self._populate(reset=True)
+    def last_updated(self):
+        return self.last_changed
 
-    def __delitem__(self, key):
-        self.model._default_manager.filter(**{self.key: key}).delete()
+    # def __init__(self, model, key='pk', value=None, instances=False, auto_create=False, *args, **kwargs):
+    #     assert value is not None
 
-    def setdefault(self, key, value):
-        if isinstance(value, self.model):
-            value = getattr(value, self.value)
-        instance, created = self.model._default_manager.get_or_create(
-            defaults={self.value: value},
-            **{self.key: key}
-        )
-        self._populate(reset=True)
+    #     super(ModelDict, self).__init__(*args, **kwargs)
 
-    def get_default(self, value):
-        if not self.auto_create:
-            return NoValue
-        return self.model.objects.create(**{self.key: value})
+    #     self.key = key
+    #     self.value = value
 
-    def _get_cache_data(self):
-        qs = self.model._default_manager
-        if self.instances:
-            return dict((getattr(i, self.key), i) for i in qs.all())
-        return dict(qs.values_list(self.key, self.value))
+    #     self.model = model
+    #     self.instances = instances
+    #     self.auto_create = auto_create
 
-    # Signals
+    #     self.cache_key = 'ModelDict:%s:%s' % (model.__name__, self.key)
+    #     self.last_updated_cache_key = 'ModelDict.last_updated:%s:%s' % (model.__name__, self.key)
 
-    def _post_save(self, sender, instance, created, **kwargs):
-        if self._cache is None:
-            self._populate()
-        if self.instances:
-            value = instance
-        else:
-            value = getattr(instance, self.value)
-        key = getattr(instance, self.key)
-        if value != self._cache.get(key):
-            self._cache[key] = value
-        self._populate(reset=True)
+    # def __setitem__(self, key, value):
+    #     if isinstance(value, self.model):
+    #         value = getattr(value, self.value)
+    #     instance, created = self.model._default_manager.get_or_create(
+    #         defaults={self.value: value},
+    #         **{self.key: key}
+    #     )
 
-    def _post_delete(self, sender, instance, **kwargs):
-        if self._cache:
-            self._cache.pop(getattr(instance, self.key), None)
-        self._populate(reset=True)
+    #     # Ensure we're updating the value in the database if it changes, and
+    #     # if it was frehsly created, we need to ensure we populate our cache.
+    #     if getattr(instance, self.value) != value:
+    #         # post_save hook hits so we dont need to populate
+    #         setattr(instance, self.value, value)
+    #         instance.save()
+    #     elif created:
+    #         self._populate(reset=True)
+
+    # def __delitem__(self, key):
+    #     self.model._default_manager.filter(**{self.key: key}).delete()
+
+    # def setdefault(self, key, value):
+    #     if isinstance(value, self.model):
+    #         value = getattr(value, self.value)
+    #     instance, created = self.model._default_manager.get_or_create(
+    #         defaults={self.value: value},
+    #         **{self.key: key}
+    #     )
+    #     self._populate(reset=True)
+
+    # def get_default(self, value):
+    #     if not self.auto_create:
+    #         return NoValue
+    #     return self.model.objects.create(**{self.key: value})
+
+    # def _get_cache_data(self):
+    #     qs = self.model._default_manager
+    #     if self.instances:
+    #         return dict((getattr(i, self.key), i) for i in qs.all())
+    #     return dict(qs.values_list(self.key, self.value))
+
+    # # Signals
+
+    # def _post_save(self, sender, instance, created, **kwargs):
+    #     if self._cache is None:
+    #         self._populate()
+    #     if self.instances:
+    #         value = instance
+    #     else:
+    #         value = getattr(instance, self.value)
+    #     key = getattr(instance, self.key)
+    #     if value != self._cache.get(key):
+    #         self._cache[key] = value
+    #     self._populate(reset=True)
+
+    # def _post_delete(self, sender, instance, **kwargs):
+    #     if self._cache:
+    #         self._cache.pop(getattr(instance, self.key), None)
+    #     self._populate(reset=True)

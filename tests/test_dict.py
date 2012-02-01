@@ -2,12 +2,15 @@ import unittest
 from redis import Redis
 
 import modeldict
-from modeldict.dict import RedisDict
+from modeldict.dict import RedisDict, ModelDict
 from modeldict.base import PersistedDict
+from tests.models import Setting
 
 import unittest
 import mock
 import time
+
+import django.core.management
 
 
 class BaseTest(object):
@@ -116,3 +119,16 @@ class TestRedisDict(BaseTest, unittest.TestCase):
             self.assertRaisesRegexp(Exception, 'boom',
                                     self.dict.persist, 'foo', 'bar')
             self.assertFalse(self.hget('foo'))
+
+class TestModelDict(BaseTest, unittest.TestCase):
+
+    def new_dict(self):
+        return ModelDict(Setting.objects, key_col='key')
+
+    def setUp(self):
+        self.dict = self.new_dict()
+        django.core.management.call_command('syncdb')
+
+    def test_persist_saves_model(self):
+        self.dict.persist('foo', 'bar')
+        self.assertTrue(Setting.objects.get(key='foo'), 'bar')

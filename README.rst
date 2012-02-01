@@ -1,27 +1,13 @@
 ----------------
-django-modeldict
+Modeldict
 ----------------
 
-ModelDict is a very efficient way to store things like settings in your database. The entire model is transformed into a dictionary (lazily) as well as stored in your cache. It's invalidated only when it needs to be (both in process and based on ``CACHE_BACKEND``).
+Modeldict contains a collection of dictionary classes backed by a persistent data store (Redis, Django models, etc) suitable for use in a distributed manner.  Dictionary values are cached locally in the instance of the dictionary, but sync with their persistent data stores when a value in the data store has changed.
 
-Quick example usage. More docs to come (maybe?)::
+TODO
+----
 
-
-	class Setting(models.Model):
-	    key = models.CharField(max_length=32)
-	    value = models.CharField(max_length=200)
-	settings = ModelDict(Setting, key='key', value='value', instances=False)
-	
-	# access missing value
-	settings['foo']
-	>>> KeyError
-	
-	# set the value
-	settings['foo'] = 'hello'
-	
-	# fetch the current value using either method
-	Setting.objects.get(key='foo').value
-	>>> 'hello'
-	
-	settings['foo']
-	>>> 'hello'
+1. Support ``auto_create`` in ``ModelDict``
+2. Support ``instances`` vs values in ``ModelDict``
+3. Look at hooking into the request/response cycle in Django.
+4. Add examples back.

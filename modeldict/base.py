@@ -65,7 +65,7 @@ class PersistedDict(object):
         cache_expired_at = self.cache_expired
 
         if cache_expired_at:
-            self.__dict = self.persistants()
+            self.__dict = self.persistents()
             self.last_synced = cache_expired_at
 
     def persist(self, key, val):
@@ -74,7 +74,7 @@ class PersistedDict(object):
     def depersist(self, key):
         raise NotImplementedError
 
-    def persistants(self):
+    def persistents(self):
         raise NotImplementedError
 
     def last_updated(self):

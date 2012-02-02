@@ -26,7 +26,7 @@ class RedisDict(PersistedDict):
     def depersist(self, key):
         self.__touch_and_multi(('hdel', (self.keyspace, key)))
 
-    def persistants(self):
+    def persistents(self):
         return self.conn.hgetall(self.keyspace)
 
     def last_updated(self):
@@ -141,7 +141,7 @@ class ModelDict(PersistedDict):
         self.manager.get(**{self.key_col: key}).delete()
         self.__touch_last_updated()
 
-    def persistants(self):
+    def persistents(self):
         return dict(
             self.manager.values_list(self.key_col, self.value_col)
         )

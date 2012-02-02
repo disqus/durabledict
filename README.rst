@@ -14,7 +14,7 @@ Modeldict contains various flavors of a dictionary-like objects backed by a pers
 
 Each different dictionary class has a different ``__init__`` method which take different arguments, so consult their documentation for specific usage detail.
 
-Once you have an instance of a modeldict, just use it like you would a normal dictionary.
+Once you have an instance of a modeldict, just use it like you would a normal dictionary.::
 
         from modeldict.dict import RedisDict
         from redis import Redis
@@ -51,7 +51,7 @@ Manually Control Persistent Storage Sync
 
 As mentioned above in "Notes on Persistence, Consistency and the In-Memory Cache,"" the downside to syncing with persistent storage before each read of dict data is it lowers your performance.  If you read 100 keys from your dictionary, that means 100 accesses to check ```last_updated``.  Even with a data store as fast as memecache, that adds up quite quickly.
 
-It therefore may be advantageous for you to not sync with persistent storage before every dead from the dict and instead control that manually.  To do so, pass ``autosync=False`` when you construct the class, i.e.:
+It therefore may be advantageous for you to not sync with persistent storage before every dead from the dict and instead control that manually.  To do so, pass ``autosync=False`` when you construct the class, i.e.::
 
         from modeldict.dict import RedisDict
         from redis import Redis

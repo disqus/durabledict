@@ -35,14 +35,14 @@ class RedisDict(PersistedDict):
     # TODO: setdefault always touches the last_updated value, even if the key
     # existed already.  It should only touch last_updated if the key did not
     # already exist
-    def setdefault(self, key, default=None):
+    def _setdefault(self, key, default=None):
         return self.__touch_and_multi(
             ('hsetnx', (self.keyspace, key, default)),
             ('hget', (self.keyspace, key)),
             returns=-1
         )
 
-    def pop(self, key, default=None):
+    def _pop(self, key, default=None):
         last_updated, value, key_existed = self.__touch_and_multi(
             ('hget', (self.keyspace, key)),
             ('hdel', (self.keyspace, key))
@@ -118,14 +118,14 @@ class ModelDict(PersistedDict):
 
     """
 
-    def __init__(self, manager, cache, key_col='key', value_col='value'):
+    def __init__(self, manager, cache, key_col='key', value_col='value', *args, **kwargs):
         self.manager = manager
         self.cache = cache
         self.cache_key = 'last_updated'
         self.key_col = key_col
         self.value_col = value_col
         self.cache.add(self.cache_key, 1) # Only adds if key does not exist
-        super(ModelDict, self).__init__()
+        super(ModelDict, self).__init__(*args, **kwargs)
 
 
     def persist(self, key, val):
@@ -146,7 +146,7 @@ class ModelDict(PersistedDict):
             self.manager.values_list(self.key_col, self.value_col)
         )
 
-    def setdefault(self, key, default=None):
+    def _setdefault(self, key, default=None):
         instance, created = self.get_or_create(key, default)
 
         if created:
@@ -154,7 +154,7 @@ class ModelDict(PersistedDict):
 
         return getattr(instance, self.value_col)
 
-    def pop(self, key, default=None):
+    def _pop(self, key, default=None):
         try:
             instance = self.manager.get(**{self.key_col: key})
             value = getattr(instance, self.value_col)

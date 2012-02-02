@@ -56,7 +56,7 @@ class BaseTest(object):
             pv.assert_called_with('foo', 'bar')
 
     def test_saving_non_strings_saves_the_str_of_the_object(self):
-        instance = Setting.objects.create(key='nk', value='nv')
+        instance = ('tuple', 'fun')
         self.dict['foo'] = instance
         self.assertEquals(str(instance), self.dict['foo'])
 
@@ -81,24 +81,6 @@ class BaseTest(object):
             p.return_value = dict(a=1, b=2, c=3)
             self.assertEquals(self.new_dict(), dict(a=1, b=2, c=3))
 
-    def test_caches_load_from_persistants_until_updated(self):
-        self.dict['foo'] = 'bar'
-
-        with mock.patch(self.mockmeth('last_updated')) as last_updated:
-            # Make it like the persistants have never been updated
-            last_updated.return_value = 0
-
-            with mock.patch(self.mockmeth('persistants')) as persistants:
-                # But the persistants have been updated to a new value
-                persistants.return_value = dict(updated='persistants')
-                self.assertEquals(self.dict, dict(foo='bar'))
-
-                # Change the last updated to a high number to expire the cache,
-                # then fetch a new value by calling len() on the dict
-                last_updated.return_value = 8000000000
-                len(self.dict)
-                self.assertEquals(self.dict, dict(updated='persistants'))
-
     def test_last_updated_setup_on_intialize(self):
         self.assertTrue(self.dict.last_updated())
 
@@ -119,8 +101,8 @@ class BaseTest(object):
         self.assertRaises(NotImplementedError, self.dict.update())
 
     def test_pop_works_correctly(self):
-        self.dict.persist('foo', 'bar')
-        self.dict.persist('buz', 'buffle')
+        self.dict['foo'] = 'bar'
+        self.dict['buz'] = 'buffle'
         self.assertDictAndPersistantsHave(foo='bar', buz='buffle')
 
         self.assertEquals(self.dict.pop('buz', 'keynotfound'), 'buffle')
@@ -134,6 +116,45 @@ class BaseTest(object):
 
         self.assertEquals(self.dict.pop('no_more_keys', 'default'), 'default')
         self.assertRaises(KeyError, self.dict.pop, 'no_more_keys')
+
+
+class AutoSyncTrueTest(object):
+
+    def test_does_not_update_self_until_persistats_have_updated(self):
+        self.dict['foo'] = 'bar'
+
+        with mock.patch(self.mockmeth('last_updated')) as last_updated:
+            # Make it like the persistants have never been updated
+            last_updated.return_value = 0
+
+            with mock.patch(self.mockmeth('persistants')) as persistants:
+                # But the persistants have been updated to a new value
+                persistants.return_value = dict(updated='persistants')
+                self.assertEquals(self.dict, dict(foo='bar'))
+
+                # Change the last updated to a high number to expire the cache,
+                # then fetch a new value by calling len() on the dict
+                last_updated.return_value = 8000000000
+                len(self.dict)
+                self.assertEquals(self.dict, dict(updated='persistants'))
+
+
+class AutoSyncFalseTest(object):
+
+    def test_does_not_update_from_persistants_on_read(self):
+        # Add a key to the dict, which will sync with persistants
+        self.assertEquals(self.dict, dict())
+        self.dict['foo'] = 'bar'
+
+        # Manually add a value not using the public API
+        self.dict.persist('added', 'value')
+
+        # And it should not be there
+        self.assertEquals(self.dict, dict(foo='bar'))
+
+        # Now sync and see that it's updated
+        self.dict.sync()
+        self.assertDictAndPersistantsHave(foo='bar', added='value')
 
 
 class RedisTest(object):
@@ -157,8 +178,12 @@ class ModelDictTest(object):
         django.core.management.call_command('syncdb')
         super(ModelDictTest, self).setUp()
 
+    @property
+    def cache(self):
+        return LocMemCache(self.keyspace, {})
 
-class TestRedisDict(BaseTest, RedisTest, unittest.TestCase):
+
+class TestRedisDict(BaseTest, AutoSyncTrueTest, RedisTest, unittest.TestCase):
 
     def new_dict(self):
         return RedisDict(self.keyspace, Redis())
@@ -196,11 +221,7 @@ class TestRedisDict(BaseTest, RedisTest, unittest.TestCase):
         pass
 
 
-class TestModelDict(BaseTest, ModelDictTest, unittest.TestCase):
-
-    @property
-    def cache(self):
-        return LocMemCache(self.keyspace, {})
+class TestModelDict(BaseTest, AutoSyncTrueTest, ModelDictTest, unittest.TestCase):
 
     def new_dict(self):
         return ModelDict(Setting.objects, key_col='key', cache=self.cache)
@@ -234,11 +255,13 @@ class TestModelDict(BaseTest, ModelDictTest, unittest.TestCase):
         pass
 
 
-# class TestRedisDictManualSync(BaseTest, unittest.TestCase):
+class TestRedisDictManualSync(BaseTest, RedisTest, AutoSyncFalseTest, unittest.TestCase):
 
-#     def new_dict(self):
-#         pass
+    def new_dict(self):
+        return RedisDict(self.keyspace, Redis(), autosync=False)
 
-#     def test_when_autocheck_false_does_not_update_from_cache(self):
-#         self.assertEquals(self.dict, dict())
-#         self.dict['foo'] = 'bar'
+
+class TestModelDictManualSync(BaseTest, ModelDictTest, AutoSyncFalseTest, unittest.TestCase):
+
+    def new_dict(self):
+        return ModelDict(Setting.objects, key_col='key', cache=self.cache, autosync=False)

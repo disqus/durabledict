@@ -12,7 +12,6 @@ class RedisDict(PersistedDict):
         mydict = RedisDict('my_redis_key', Redis())
         mydict['test']
         >>> 'bar' #doctest: +SKIP
-
     """
     def __init__(self, keyspace, connection, *args, **kwargs):
         self.keyspace = keyspace
@@ -65,7 +64,7 @@ class RedisDict(PersistedDict):
 
         with self.conn.pipeline() as pipe:
             pipe.incr(self.__last_update_key)
-            {getattr(pipe, function)(*args) for function, args in args}
+            { getattr(pipe, function)(*args) for function, args in args }
             results = pipe.execute()
 
             if kwargs.get('returns'):
@@ -86,20 +85,17 @@ class ModelDict(PersistedDict):
     Dictionary-style access to a model. Populates a cache and a local in-memory
     to avoid multiple hits to the database.
 
-    Specifying ``instances=True`` will cause the cache to store instances rather
-    than simple values.
-
-    If ``auto_create=True`` accessing modeldict[key] when key does not exist will
-    attempt to create it in the database.
-
-    Functions in two different ways, depending on the constructor:
-
         # Given ``Model`` that has a column named ``foo`` where the value at
         # that column is "bar":
 
-        mydict = ModelDict(Model, value_col='foo')
+        mydict = ModelDict(Model.manager, value_col='foo')
         mydict['test']
         >>> 'bar' #doctest: +SKIP
+
+    The first positional argument to ``ModelDict`` is ``manager``, which is an
+    instance of a Manager which ``ModelDict`` uses to read and write to your
+    database.  Any object that conforms to the interface can work, but the
+    expectation is that ``manager`` is a Django.model manager.
 
     If you want to use another key in the ModelDict besides the ``Model``s
     ``pk``, you may specify that in the constructor with ``key_col``.  For
@@ -110,12 +106,11 @@ class ModelDict(PersistedDict):
         mydict['test']
         >>> 'bar' #doctest: +SKIP
 
-    The constructor also takes a cache keyword argument, which is an object that
-    responds to two methods, add and incr.  The cache object is used to manage
-    the value for last_updated.  ``add`` is called on initialize to create the
-    key if it does not exist with the default value, and ``incr`` is done to
-    atomically update the last_updated value.
-
+    The constructor also takes a ``cache`` keyword argument, which is an object
+    that responds to two methods, add and incr.  The cache object is used to
+    manage the value for last_updated.  ``add`` is called on initialize to
+    create the key if it does not exist with the default value, and ``incr`` is
+    done to atomically update the last_updated value.
     """
 
     def __init__(self, manager, cache, key_col='key', value_col='value', *args, **kwargs):
@@ -124,9 +119,8 @@ class ModelDict(PersistedDict):
         self.cache_key = 'last_updated'
         self.key_col = key_col
         self.value_col = value_col
-        self.cache.add(self.cache_key, 1) # Only adds if key does not exist
+        self.cache.add(self.cache_key, 1)  # Only adds if key does not exist
         super(ModelDict, self).__init__(*args, **kwargs)
-
 
     def persist(self, key, val):
         instance, created = self.get_or_create(key, val)

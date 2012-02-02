@@ -51,6 +51,11 @@ class BaseTest(object):
             self.dict['foo'] = 'bar'
             pv.assert_called_with('foo', 'bar')
 
+    def test_saving_non_strings_saves_the_str_of_the_object(self):
+        instance = Setting.objects.create(key='nk', value='nv')
+        self.dict['foo'] = instance
+        self.assertEquals(str(instance), self.dict['foo'])
+
     def test_setdefault_works_and_persists_correctly(self):
         self.assertFalse(self.dict.get('foo'))
 

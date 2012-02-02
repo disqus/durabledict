@@ -20,6 +20,10 @@ class BaseTest(object):
     def dict_class(self):
         return self.dict.__class__.__name__
 
+    def setUp(self):
+        self.keyspace = 'test'
+        self.dict = self.new_dict()
+
     def mockmeth(self, method):
         return "modeldict.dict.%s.%s" % (self.dict_class, method)
 
@@ -131,19 +135,33 @@ class BaseTest(object):
         self.assertEquals(self.dict.pop('no_more_keys', 'default'), 'default')
         self.assertRaises(KeyError, self.dict.pop, 'no_more_keys')
 
-class TestRedisDict(BaseTest, unittest.TestCase):
 
-    def new_dict(self):
-        return RedisDict('test', Redis())
-
-    def setUp(self):
-        self.dict = self.new_dict()
+class RedisTest(object):
 
     def tearDown(self):
         self.dict.conn.flushdb()
+        super(RedisTest, self).tearDown()
 
     def hget(self, key):
-        return self.dict.conn.hget('test', key)
+        return self.dict.conn.hget(self.keyspace, key)
+
+
+class ModelDictTest(object):
+
+    def tearDown(self):
+        django.core.management.call_command('flush', interactive=False)
+        self.dict.cache.clear()
+        super(ModelDictTest, self).tearDown()
+
+    def setUp(self):
+        django.core.management.call_command('syncdb')
+        super(ModelDictTest, self).setUp()
+
+
+class TestRedisDict(BaseTest, RedisTest, unittest.TestCase):
+
+    def new_dict(self):
+        return RedisDict(self.keyspace, Redis())
 
     def test_persist_saves_to_redis(self):
         self.assertFalse(self.hget('foo'))
@@ -160,7 +178,7 @@ class TestRedisDict(BaseTest, unittest.TestCase):
         self.dict.persist('foo', 'bar')
         self.dict.persist('baz', 'bang')
 
-        new_dict = RedisDict('test', Redis())
+        new_dict = self.new_dict()
 
         self.assertEquals(new_dict.persistants(), dict(foo='bar', baz='bang'))
 
@@ -174,22 +192,18 @@ class TestRedisDict(BaseTest, unittest.TestCase):
                                     self.dict.persist, 'foo', 'bar')
             self.assertFalse(self.hget('foo'))
 
-class TestModelDict(BaseTest, unittest.TestCase):
+    def test_instances_different_keyspaces_do_not_share_last_updated(self):
+        pass
+
+
+class TestModelDict(BaseTest, ModelDictTest, unittest.TestCase):
 
     @property
     def cache(self):
-        return LocMemCache('test', {})
+        return LocMemCache(self.keyspace, {})
 
     def new_dict(self):
         return ModelDict(Setting.objects, key_col='key', cache=self.cache)
-
-    def setUp(self):
-        self.dict = self.new_dict()
-        django.core.management.call_command('syncdb')
-
-    def tearDown(self):
-        django.core.management.call_command('flush', interactive=False)
-        self.dict.cache.clear()
 
     def test_persist_saves_model(self):
         self.dict.persist('foo', 'bar')
@@ -218,3 +232,13 @@ class TestModelDict(BaseTest, unittest.TestCase):
 
     def test_changes_to_last_updated_are_atomic(self):
         pass
+
+
+# class TestRedisDictManualSync(BaseTest, unittest.TestCase):
+
+#     def new_dict(self):
+#         pass
+
+#     def test_when_autocheck_false_does_not_update_from_cache(self):
+#         self.assertEquals(self.dict, dict())
+#         self.dict['foo'] = 'bar'

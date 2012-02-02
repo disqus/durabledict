@@ -20,11 +20,11 @@ class RedisDict(PersistedDict):
         super(RedisDict, self).__init__(*args, **kwargs)
         self.__touch_last_updated()
 
-    def persist(self, key, val):
-        self.__touch_last_update_and('hset', self.keyspace, key, val)
+    def persist(self, key, value):
+        self.__touch_and_multi(('hset', (self.keyspace, key, value)))
 
     def depersist(self, key):
-        self.__touch_last_update_and('hdel', self.keyspace, key)
+        self.__touch_and_multi(('hdel', (self.keyspace, key)))
 
     def persistants(self):
         return self.conn.hgetall(self.keyspace)
@@ -32,14 +32,49 @@ class RedisDict(PersistedDict):
     def last_updated(self):
         return int(self.conn.get(self.__last_update_key) or 0)
 
+    # TODO: setdefault always touches the last_updated value, even if the key
+    # existed already.  It should only touch last_updated if the key did not
+    # already exist
+    def setdefault(self, key, default=None):
+        return self.__touch_and_multi(
+            ('hsetnx', (self.keyspace, key, default)),
+            ('hget', (self.keyspace, key)),
+            returns=-1
+        )
+
+    def pop(self, key, default=None):
+        last_updated, value, key_existed = self.__touch_and_multi(
+            ('hget', (self.keyspace, key)),
+            ('hdel', (self.keyspace, key))
+        )
+
+        if key_existed:
+            return value
+        elif default:
+            return default
+        else:
+            raise KeyError
+
+    def __touch_and_multi(self, *args, **kwargs):
+        """
+        Runs each tuple tuple of (redis_cmd, args) in provided inside of a Redis
+        MULTI block, plus an increment of the last_updated value, then executes
+        the MULTI block.  If ``returns`` is specified, it returns that index
+        from the results list.  If ``returns`` is None, returns all values.
+        """
+
+        with self.conn.pipeline() as pipe:
+            pipe.incr(self.__last_update_key)
+            {getattr(pipe, function)(*args) for function, args in args}
+            results = pipe.execute()
+
+            if kwargs.get('returns'):
+                return results[kwargs.get('returns')]
+            else:
+                return results
+
     def __touch_last_updated(self):
         return self.conn.incr(self.__last_update_key)
-
-    def __touch_last_update_and(self, method, *args, **kwargs):
-        with self.conn.pipeline() as pipe:
-            getattr(pipe, method)(*args, **kwargs)
-            pipe.incr(self.__last_update_key)
-            pipe.execute()
 
     @property
     def __last_update_key(self):
@@ -94,10 +129,7 @@ class ModelDict(PersistedDict):
 
 
     def persist(self, key, val):
-        instance, created = self.manager.get_or_create(
-            defaults={self.value_col: val},
-            **{self.key_col: key}
-        )
+        instance, created = self.get_or_create(key, val)
 
         if not created and getattr(instance, self.value_col) != val:
             setattr(instance, self.value_col, val)
@@ -114,82 +146,35 @@ class ModelDict(PersistedDict):
             self.manager.values_list(self.key_col, self.value_col)
         )
 
+    def setdefault(self, key, default=None):
+        instance, created = self.get_or_create(key, default)
+
+        if created:
+            self.__touch_last_updated()
+
+        return getattr(instance, self.value_col)
+
+    def pop(self, key, default=None):
+        try:
+            instance = self.manager.get(**{self.key_col: key})
+            value = getattr(instance, self.value_col)
+            instance.delete()
+            self.__touch_last_updated()
+            return value
+        except self.manager.model.DoesNotExist:
+            if default is not None:
+                return default
+            else:
+                raise KeyError
+
+    def get_or_create(self, key, val):
+        return self.manager.get_or_create(
+            defaults={self.value_col: val},
+            **{self.key_col: key}
+        )
+
     def last_updated(self):
         return self.cache.get(self.cache_key)
 
     def __touch_last_updated(self):
         self.cache.incr('last_updated')
-
-    # def __init__(self, model, key='pk', value=None, instances=False, auto_create=False, *args, **kwargs):
-    #     assert value is not None
-
-    #     super(ModelDict, self).__init__(*args, **kwargs)
-
-    #     self.key = key
-    #     self.value = value
-
-    #     self.model = model
-    #     self.instances = instances
-    #     self.auto_create = auto_create
-
-    #     self.cache_key = 'ModelDict:%s:%s' % (model.__name__, self.key)
-    #     self.last_updated_cache_key = 'ModelDict.last_updated:%s:%s' % (model.__name__, self.key)
-
-    # def __setitem__(self, key, value):
-    #     if isinstance(value, self.model):
-    #         value = getattr(value, self.value)
-    #     instance, created = self.model._default_manager.get_or_create(
-    #         defaults={self.value: value},
-    #         **{self.key: key}
-    #     )
-
-    #     # Ensure we're updating the value in the database if it changes, and
-    #     # if it was frehsly created, we need to ensure we populate our cache.
-    #     if getattr(instance, self.value) != value:
-    #         # post_save hook hits so we dont need to populate
-    #         setattr(instance, self.value, value)
-    #         instance.save()
-    #     elif created:
-    #         self._populate(reset=True)
-
-    # def __delitem__(self, key):
-    #     self.model._default_manager.filter(**{self.key: key}).delete()
-
-    # def setdefault(self, key, value):
-    #     if isinstance(value, self.model):
-    #         value = getattr(value, self.value)
-    #     instance, created = self.model._default_manager.get_or_create(
-    #         defaults={self.value: value},
-    #         **{self.key: key}
-    #     )
-    #     self._populate(reset=True)
-
-    # def get_default(self, value):
-    #     if not self.auto_create:
-    #         return NoValue
-    #     return self.model.objects.create(**{self.key: value})
-
-    # def _get_cache_data(self):
-    #     qs = self.model._default_manager
-    #     if self.instances:
-    #         return dict((getattr(i, self.key), i) for i in qs.all())
-    #     return dict(qs.values_list(self.key, self.value))
-
-    # # Signals
-
-    # def _post_save(self, sender, instance, created, **kwargs):
-    #     if self._cache is None:
-    #         self._populate()
-    #     if self.instances:
-    #         value = instance
-    #     else:
-    #         value = getattr(instance, self.value)
-    #     key = getattr(instance, self.key)
-    #     if value != self._cache.get(key):
-    #         self._cache[key] = value
-    #     self._populate(reset=True)
-
-    # def _post_delete(self, sender, instance, **kwargs):
-    #     if self._cache:
-    #         self._cache.pop(getattr(instance, self.key), None)
-    #     self._populate(reset=True)

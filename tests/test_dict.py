@@ -23,9 +23,14 @@ class BaseTest(object):
     def mockmeth(self, method):
         return "modeldict.dict.%s.%s" % (self.dict_class, method)
 
+    def assertDictAndPersistantsHave(self, **kwargs):
+        self.assertEquals(self.dict, kwargs)
+        self.assertEquals(self.dict.persistants(), kwargs)
+
     def test_acts_like_a_dictionary(self):
         self.dict['foo'] = 'bar'
         self.assertEquals(self.dict['foo'], 'bar')
+
         self.dict['foo2'] = 'bar2'
         self.assertEquals(self.dict['foo2'], 'bar2')
 
@@ -45,6 +50,15 @@ class BaseTest(object):
         with mock.patch(self.mockmeth('persist')) as pv:
             self.dict['foo'] = 'bar'
             pv.assert_called_with('foo', 'bar')
+
+    def test_setdefault_works_and_persists_correctly(self):
+        self.assertFalse(self.dict.get('foo'))
+
+        self.assertTrue(self.dict.setdefault('foo', 'bar'), 'bar')
+        self.assertTrue(self.dict.setdefault('foo', 'notset'), 'bar')
+
+        self.assertDictAndPersistantsHave(foo='bar')
+        self.assertEquals(self.dict['foo'], 'bar')
 
     def test_delitem_calls_depersist(self):
         self.dict['foo'] = 'bar'
@@ -91,6 +105,26 @@ class BaseTest(object):
 
         self.dict.depersist('foo')
         self.assertTrue(self.dict.last_updated() > before)
+
+    def test_calling_update_raises_notimplemented(self):
+        self.assertRaises(NotImplementedError, self.dict.update())
+
+    def test_pop_works_correctly(self):
+        self.dict.persist('foo', 'bar')
+        self.dict.persist('buz', 'buffle')
+        self.assertDictAndPersistantsHave(foo='bar', buz='buffle')
+
+        self.assertEquals(self.dict.pop('buz', 'keynotfound'), 'buffle')
+        self.assertDictAndPersistantsHave(foo='bar')
+
+        self.assertEquals(self.dict.pop('junk', 'keynotfound'), 'keynotfound')
+        self.assertDictAndPersistantsHave(foo='bar')
+
+        self.assertEquals(self.dict.pop('foo'), 'bar')
+        self.assertDictAndPersistantsHave()
+
+        self.assertEquals(self.dict.pop('no_more_keys', 'default'), 'default')
+        self.assertRaises(KeyError, self.dict.pop, 'no_more_keys')
 
 class TestRedisDict(BaseTest, unittest.TestCase):
 
@@ -169,6 +203,13 @@ class TestModelDict(BaseTest, unittest.TestCase):
 
     def test_last_updated_set_to_1_on_initialize(self):
         self.assertEquals(self.dict.last_updated(), 1)
+
+    def test_setdefault_does_not_update_last_updated_if_key_exists(self):
+        self.dict.persist('foo', 'bar')
+        before = self.dict.last_updated()
+
+        self.dict.setdefault('foo', 'notset')
+        self.assertEquals(before, self.dict.last_updated())
 
     def test_changes_to_last_updated_are_atomic(self):
         pass

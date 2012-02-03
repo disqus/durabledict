@@ -1,5 +1,4 @@
 from modeldict.base import PersistedDict
-import time
 
 
 class RedisDict(PersistedDict):
@@ -28,7 +27,7 @@ class RedisDict(PersistedDict):
 
     def persistents(self):
         encoded = self.conn.hgetall(self.keyspace)
-        tuples = [(k, self._decode(v)) for k,v in encoded.items()]
+        tuples = [(k, self._decode(v)) for k, v in encoded.items()]
         return dict(tuples)
 
     def last_updated(self):
@@ -68,7 +67,7 @@ class RedisDict(PersistedDict):
 
         with self.conn.pipeline() as pipe:
             pipe.incr(self.__last_update_key)
-            { getattr(pipe, function)(*args) for function, args in args }
+            [getattr(pipe, function)(*args) for function, args in args]
             results = pipe.execute()
 
             if kwargs.get('returns'):

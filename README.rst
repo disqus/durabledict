@@ -37,6 +37,8 @@ Once you have an instance of a modeldict, just use it like you would a normal di
         settings['foo']
         >>> KeyError
 
+A dict may choose how to serialize and save python objects in its persistant data store, but the general rule it to allow most any type of python object to be saved and then retrieved later.  Both ``RedisDict`` and ``ModelDict`` pickle their objects, so any object that is "pickleable" can be saved to those stores.
+
 Notes on Persistence, Consistency and the In-Memory Cache
 -----------------------------
 

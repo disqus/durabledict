@@ -170,6 +170,14 @@ class RedisTest(object):
     def hget(self, key):
         return self.dict.conn.hget(self.keyspace, key)
 
+    def test_instances_different_keyspaces_do_not_share_last_updated(self):
+        self.dict['foo'] = 'bar'
+        self.dict['bazzle'] = 'bungie'
+        self.assertEquals(self.dict.last_updated(), 3)
+
+        new_dict = self.new_dict(keyspace='another_one')
+        self.assertNotEquals(self.dict.last_updated(), new_dict.last_updated())
+
 
 class ModelDictTest(object):
 
@@ -189,8 +197,8 @@ class ModelDictTest(object):
 
 class TestRedisDict(BaseTest, AutoSyncTrueTest, RedisTest, unittest.TestCase):
 
-    def new_dict(self):
-        return RedisDict(self.keyspace, Redis())
+    def new_dict(self, keyspace=None):
+        return RedisDict(keyspace or self.keyspace, Redis())
 
     def test_persist_saves_to_redis(self):
         self.assertFalse(self.hget('foo'))
@@ -220,9 +228,6 @@ class TestRedisDict(BaseTest, AutoSyncTrueTest, RedisTest, unittest.TestCase):
             self.assertRaisesRegexp(Exception, 'boom',
                                     self.dict.persist, 'foo', 'bar')
             self.assertFalse(self.hget('foo'))
-
-    def test_instances_different_keyspaces_do_not_share_last_updated(self):
-        pass
 
 
 class TestModelDict(BaseTest, AutoSyncTrueTest, ModelDictTest, unittest.TestCase):
@@ -261,8 +266,8 @@ class TestModelDict(BaseTest, AutoSyncTrueTest, ModelDictTest, unittest.TestCase
 
 class TestRedisDictManualSync(BaseTest, RedisTest, AutoSyncFalseTest, unittest.TestCase):
 
-    def new_dict(self):
-        return RedisDict(self.keyspace, Redis(), autosync=False)
+    def new_dict(self, keyspace=None):
+        return RedisDict(keyspace or self.keyspace, Redis(), autosync=False)
 
 
 class TestModelDictManualSync(BaseTest, ModelDictTest, AutoSyncFalseTest, unittest.TestCase):

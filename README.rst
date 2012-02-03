@@ -77,10 +77,28 @@ It's also probably most adventageuous to construct your dicts with ``autosync=Fa
 
         django.core.signals.request_started.connect(settings.sync)
 
+Creating Your Own Persistent Dict
+---------------------------------
+
+Creating your own persistent dict is easy.  All you need to do is subclass ``modeldict.base.PersistedDict`` and implement the following required interface methods.
+
+1. ``persist(key, value)`` - Persist ``value`` at ``key`` to your data store.
+2. ``depersist(key)`` - Delete the value at ``key`` from your data store.
+3. ``persistents()`` - Return a ``key=val`` dict of all keys in your data store.
+4. ``last_updated()`` - A comparable value of when the data in your data store was last updated.
+
+You may also implement a couple optional dictionary methods, which ``modeldict.base.PersistedDict`` will call when the actual non-underscored version is called on the dict.
+
+1. ``_pop(key[,default])`` - If ``key`` is in the dictionary, remove it and return its value, else return ``default``. If ``default`` is not given and ``key`` is not in the dictionary, a ``KeyError`` is raised.
+2. ``_setdefault(key[,default]) - If key is in the dictionary, return its value. If not, insert key with a value of default and return default. default defaults to ``None``.
+
+See ``modeldict.dict.RedisDict`` for a reference implementation.
+
 Possible Future Additions
 ------------------------
 
 These are features that may be added to ModelDict at some point in the future.
 
-1. Support ``auto_create`` in ``ModelDict``
-2. Support ``instances`` vs values in ``ModelDict``
+1. Pickle the values in persistent storage
+2. Support ``auto_create`` in ``ModelDict``
+3. Support ``instances`` vs values in ``ModelDict``

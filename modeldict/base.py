@@ -5,8 +5,9 @@ import base64
 class PersistedDict(object):
     """
     Dictionary that calls out to its persistant data store when items are
-    created or deleted.  Caches data in process for a set time period before
-    refreshing from the persistant data store.
+    created or deleted.  Syncs with data fron the data store before every read,
+    unless ``autosync=False`` is passed, which causes the dict to only sync
+    data from the data store on writes and when ``sync()`` is called.
     """
 
     def __init__(self, autosync=True):

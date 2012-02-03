@@ -1,6 +1,7 @@
 import pickle
 import base64
 
+
 class PersistedDict(object):
     """
     Dictionary that calls out to its persistant data store when items are

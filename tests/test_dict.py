@@ -1,17 +1,11 @@
 # coding=utf-8
 
 import unittest
-from redis import Redis
-
-import modeldict
-from modeldict.dict import RedisDict, ModelDict
-from modeldict.base import PersistedDict
-from tests.models import Setting
-
-import unittest
 import mock
-import time
-import pickle
+
+from redis import Redis
+from modeldict.dict import RedisDict, ModelDict
+from tests.models import Setting
 
 import django.core.management
 from django.core.cache.backends.locmem import LocMemCache
@@ -59,7 +53,7 @@ class BaseTest(object):
             pv.assert_called_with('foo', 'bar')
 
     def test_can_save_and_retrieve_complex_objects(self):
-        complex_vars = ('tuple', 'fun', 1.0, [1,2,3,4], u'☃')
+        complex_vars = ('tuple', 'fun', 1.0, [1, 2, 3, 4], u'☃')
         self.dict['foo'] = complex_vars
 
         self.assertEquals(complex_vars, self.dict['foo'])
@@ -69,7 +63,6 @@ class BaseTest(object):
         self.assertEquals(self.dict.setdefault('bazzle', 'fuzzle'), 'fuzzle')
 
         self.assertEquals(self.dict.pop('foo'), complex_vars)
-
 
     def test_setdefault_works_and_persists_correctly(self):
         self.assertFalse(self.dict.get('foo'))

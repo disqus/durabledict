@@ -99,6 +99,5 @@ Possible Future Additions
 
 These are features that may be added to ModelDict at some point in the future.
 
-1. Pickle the values in persistent storage
-2. Support ``auto_create`` in ``ModelDict``
-3. Support ``instances`` vs values in ``ModelDict``
+1. Support ``auto_create`` in ``ModelDict``
+2. Support ``instances`` vs values in ``ModelDict``

@@ -1,3 +1,6 @@
+import pickle
+import base64
+
 class PersistedDict(object):
     """
     Dictionary that calls out to its persistant data store when items are
@@ -79,3 +82,11 @@ class PersistedDict(object):
 
     def last_updated(self):
         raise NotImplementedError
+
+    def _encode(self, data):
+        pickled = pickle.dumps(data, pickle.HIGHEST_PROTOCOL)
+        return base64.encodestring(pickled)
+
+    def _decode(self, data):
+        pickled = base64.decodestring(data)
+        return pickle.loads(pickled)

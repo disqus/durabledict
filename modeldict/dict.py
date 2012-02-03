@@ -20,13 +20,16 @@ class RedisDict(PersistedDict):
         self.__touch_last_updated()
 
     def persist(self, key, value):
-        self.__touch_and_multi(('hset', (self.keyspace, key, value)))
+        encoded = self._encode(value)
+        self.__touch_and_multi(('hset', (self.keyspace, key, encoded)))
 
     def depersist(self, key):
         self.__touch_and_multi(('hdel', (self.keyspace, key)))
 
     def persistents(self):
-        return self.conn.hgetall(self.keyspace)
+        encoded = self.conn.hgetall(self.keyspace)
+        tuples = [(k, self._decode(v)) for k,v in encoded.items()]
+        return dict(tuples)
 
     def last_updated(self):
         return int(self.conn.get(self.__last_update_key) or 0)
@@ -35,20 +38,21 @@ class RedisDict(PersistedDict):
     # existed already.  It should only touch last_updated if the key did not
     # already exist
     def _setdefault(self, key, default=None):
-        return self.__touch_and_multi(
-            ('hsetnx', (self.keyspace, key, default)),
+        encoded = self.__touch_and_multi(
+            ('hsetnx', (self.keyspace, key, self._encode(default))),
             ('hget', (self.keyspace, key)),
             returns=-1
         )
+        return self._decode(encoded)
 
     def _pop(self, key, default=None):
-        last_updated, value, key_existed = self.__touch_and_multi(
+        last_updated, encoded, key_existed = self.__touch_and_multi(
             ('hget', (self.keyspace, key)),
             ('hdel', (self.keyspace, key))
         )
 
         if key_existed:
-            return value
+            return self._decode(encoded)
         elif default:
             return default
         else:
@@ -126,7 +130,7 @@ class ModelDict(PersistedDict):
         instance, created = self.get_or_create(key, val)
 
         if not created and getattr(instance, self.value_col) != val:
-            setattr(instance, self.value_col, val)
+            setattr(instance, self.value_col, self._encode(val))
             instance.save()
 
         self.__touch_last_updated()
@@ -136,9 +140,9 @@ class ModelDict(PersistedDict):
         self.__touch_last_updated()
 
     def persistents(self):
-        return dict(
-            self.manager.values_list(self.key_col, self.value_col)
-        )
+        encoded_tuples = self.manager.values_list(self.key_col, self.value_col)
+        tuples = [(k, self._decode(v)) for k, v in encoded_tuples]
+        return dict(tuples)
 
     def _setdefault(self, key, default=None):
         instance, created = self.get_or_create(key, default)
@@ -146,12 +150,12 @@ class ModelDict(PersistedDict):
         if created:
             self.__touch_last_updated()
 
-        return getattr(instance, self.value_col)
+        return self._decode(getattr(instance, self.value_col))
 
     def _pop(self, key, default=None):
         try:
             instance = self.manager.get(**{self.key_col: key})
-            value = getattr(instance, self.value_col)
+            value = self._decode(getattr(instance, self.value_col))
             instance.delete()
             self.__touch_last_updated()
             return value
@@ -163,7 +167,7 @@ class ModelDict(PersistedDict):
 
     def get_or_create(self, key, val):
         return self.manager.get_or_create(
-            defaults={self.value_col: val},
+            defaults={self.value_col: self._encode(val)},
             **{self.key_col: key}
         )
 

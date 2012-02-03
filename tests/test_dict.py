@@ -1,3 +1,5 @@
+# coding=utf-8
+
 import unittest
 from redis import Redis
 
@@ -9,6 +11,7 @@ from tests.models import Setting
 import unittest
 import mock
 import time
+import pickle
 
 import django.core.management
 from django.core.cache.backends.locmem import LocMemCache
@@ -55,10 +58,18 @@ class BaseTest(object):
             self.dict['foo'] = 'bar'
             pv.assert_called_with('foo', 'bar')
 
-    def test_saving_non_strings_saves_the_str_of_the_object(self):
-        instance = ('tuple', 'fun')
-        self.dict['foo'] = instance
-        self.assertEquals(str(instance), self.dict['foo'])
+    def test_can_save_and_retrieve_complex_objects(self):
+        complex_vars = ('tuple', 'fun', 1.0, [1,2,3,4], u'☃')
+        self.dict['foo'] = complex_vars
+
+        self.assertEquals(complex_vars, self.dict['foo'])
+        self.assertEquals(dict(foo=complex_vars), self.dict.persistents())
+
+        self.assertEquals(self.dict.setdefault('foo', complex_vars), complex_vars)
+        self.assertEquals(self.dict.setdefault('bazzle', 'fuzzle'), 'fuzzle')
+
+        self.assertEquals(self.dict.pop('foo'), complex_vars)
+
 
     def test_setdefault_works_and_persists_correctly(self):
         self.assertFalse(self.dict.get('foo'))
@@ -191,11 +202,11 @@ class TestRedisDict(BaseTest, AutoSyncTrueTest, RedisTest, unittest.TestCase):
     def test_persist_saves_to_redis(self):
         self.assertFalse(self.hget('foo'))
         self.dict.persist('foo', 'bar')
-        self.assertEquals(self.hget('foo'), 'bar')
+        self.assertEquals(self.dict._decode(self.hget('foo')), 'bar')
 
     def test_depersist_removes_it_from_redis(self):
         self.dict['foo'] = 'bar'
-        self.assertEquals(self.hget('foo'), 'bar')
+        self.assertEquals(self.dict._decode(self.hget('foo')), 'bar')
         self.dict.depersist('foo')
         self.assertFalse(self.hget('foo'))
 

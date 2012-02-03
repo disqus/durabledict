@@ -63,10 +63,19 @@ This causes the dictionary behave in the following way:
 
 1. Like normal, the dictionary initializes from the persistent data store upon instantiation.
 2. Writes (both inserts and updates), along with deletes of values to the dictionary will still automatically sync with the data store each time the operation happens.
-3. Any time a dictionary is read from, only data current in the internal cache is used.  The dict *will not sync with its persistent data store* before reads.
-4. To force the dict to sync with its persistent data store, you may call the ``sync()`` method on the dictionary.
+3. Any time a dictionary is read from, only data current in the internal cache is used.  The dict *will not attempt to sync with its persistent data store* before reads.
+4. To force the dict to attempt to sync with its persistent data store, you may call the ``sync()`` method on the dictionary.  As with when ``autosync`` is false, if ``last_update`` says there are no changes, the dict will still not fetch and update itsself with values from persistent storage.
 
 A good use case for manual syncing is a read-heavy web application, where you're using a modeldict for settings configuration.  Very few requests actually *change* the dictionary contents - most simply read from the dictionary.  In this situation, you would perhaps only ``sync()`` at the beginning of a user's web request to make sure the dict is up to date, but then not during the request in order to push the response to the user as fast as possible.
+
+Integration with Django
+------------------------
+
+If you would like to store your dict values in the dadatabase for your Django application, you should use the ``modeldict.dict.modelDict`` class.  This class takes an instance of a model's manager, as well as ``key_col`` and ``value_col`` arguments which can be used to tell ModelDict which columns on your object it should use to store data.
+
+It's also probably most adventageuous to construct your dicts with ``autosync=False`` (see "Manually Control Persistent Storage Sync" above) and manually call ``sync()`` before each request.  This can be acomlished most easily via the ``request_started`` signal::
+
+        django.core.signals.request_started.connect(settings.sync)
 
 Possible Future Additions
 ------------------------

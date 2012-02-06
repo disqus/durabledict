@@ -11,7 +11,7 @@ except ImportError:
 
 setup(
     name='modeldict',
-    version='1.1.6',
+    version='0.1.0',
     author='DISQUS',
     author_email='opensource@disqus.com',
     url='http://github.com/disqus/modeldict/',
@@ -24,7 +24,6 @@ setup(
     test_suite = 'runtests.runtests',
     include_package_data=True,
     classifiers=[
-        'Framework :: Django',
         'Intended Audience :: Developers',
         'Intended Audience :: System Administrators',
         'Operating System :: OS Independent',

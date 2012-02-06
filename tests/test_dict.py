@@ -4,7 +4,7 @@ import unittest
 import mock
 
 from redis import Redis
-from modeldict.dict import RedisDict, ModelDict
+from modeldict.dict import RedisDict, ModelDict, MemoryDict
 from tests.models import Setting
 
 import django.core.management
@@ -262,6 +262,12 @@ class TestModelDict(BaseTest, AutoSyncTrueTest, ModelDictTest, unittest.TestCase
 
     def test_changes_to_last_updated_are_atomic(self):
         pass
+
+
+class TestMemoryDict(BaseTest, AutoSyncTrueTest, unittest.TestCase):
+
+    def new_dict(self):
+        return MemoryDict()
 
 
 class TestRedisDictManualSync(BaseTest, RedisTest, AutoSyncFalseTest, unittest.TestCase):

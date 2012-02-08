@@ -269,6 +269,12 @@ class TestMemoryDict(BaseTest, AutoSyncTrueTest, unittest.TestCase):
     def new_dict(self):
         return MemoryDict()
 
+    def test_does_not_pickle_objects_when_set(self):
+        obj = object()
+        self.dict['foo'] = obj
+
+        self.assertEquals(self.dict.values(), [obj])
+
 
 class TestRedisDictManualSync(BaseTest, RedisTest, AutoSyncFalseTest, unittest.TestCase):
 

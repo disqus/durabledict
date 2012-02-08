@@ -224,3 +224,9 @@ class MemoryDict(PersistedDict):
             raise KeyError
 
         return self._decode(val)
+
+    def _encode(self, value):
+        return value
+
+    def _decode(self, value):
+        return value

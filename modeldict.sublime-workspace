@@ -1,0 +1,2423 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"di",
+				"dict	(attribute, instance)"
+			],
+			[
+				"dict",
+				"dict_class	(attribute, instance)"
+			],
+			[
+				"file",
+				"filename	(local, instance)"
+			],
+			[
+				"path",
+				"path_segments"
+			],
+			[
+				"finai",
+				"final_filepath	(local, instance)"
+			],
+			[
+				"out",
+				"outfile	(local, instance)"
+			],
+			[
+				"Image",
+				"ImageUpload	(global, class)"
+			],
+			[
+				"Up",
+				"UploadDescriptor	(global, class)"
+			],
+			[
+				"s3",
+				"s3_upload_storage	(global, instance)"
+			],
+			[
+				"local",
+				"local_file_storage	(imported, instance)"
+			],
+			[
+				"tra",
+				"transitional_s3_upload_storage	(global, instance)"
+			],
+			[
+				"ins",
+				"instance	(local, instance)"
+			],
+			[
+				"S3",
+				"S3BotoStorage"
+			],
+			[
+				"con",
+				"content"
+			],
+			[
+				"name",
+				"namespaces"
+			],
+			[
+				"mon",
+				"monkey_patch"
+			],
+			[
+				"raw",
+				"raw_message	(local, instance)"
+			],
+			[
+				"lis",
+				"listen_to	(attribute, instance)"
+			],
+			[
+				"hand",
+				"handled_message	(local, instance)"
+			],
+			[
+				"had",
+				"handled_message	(local, instance)"
+			],
+			[
+				"kaz",
+				"kazoo_handler	(local, instance)"
+			],
+			[
+				"Gre",
+				"Greenlet	(imported, class)"
+			],
+			[
+				"ge",
+				"gevent_threading"
+			],
+			[
+				"Zoo",
+				"ZooKeeperException	(imported, instance)"
+			],
+			[
+				"ex",
+				"extra_config	(local, instance)"
+			],
+			[
+				"cli",
+				"cli_gevent_monkey	(imported, instance)"
+			],
+			[
+				"de",
+				"development"
+			],
+			[
+				"SUP",
+				"SUPPORTED_CONCURRENCY_MODELS	(global, instance)"
+			],
+			[
+				"SU",
+				"SUPPORTED_CONCURRENCY_MODELS	(global, instance)"
+			],
+			[
+				"app",
+				"application"
+			],
+			[
+				"conf",
+				"config_file	(local, instance)"
+			],
+			[
+				"__",
+				"__base__	(builtin, class)"
+			],
+			[
+				"Connectio",
+				"ConnectionLossException	(imported, instance)"
+			],
+			[
+				"call",
+				"callback	(local, instance)"
+			],
+			[
+				"from",
+				"from_pyfile"
+			],
+			[
+				"fro",
+				"from_pyfile"
+			],
+			[
+				"pat",
+				"path	(imported, module)"
+			],
+			[
+				"imp",
+				"import_string	(local, instance)"
+			],
+			[
+				"import",
+				"import_string"
+			],
+			[
+				"im",
+				"import_string"
+			],
+			[
+				"cong",
+				"config_filepath"
+			],
+			[
+				"Ser",
+				"Service"
+			],
+			[
+				"set",
+				"set_var	(attribute, function)"
+			],
+			[
+				"green",
+				"greenlet"
+			],
+			[
+				"call_",
+				"call_args_list	(attribute, instance)"
+			],
+			[
+				"Real",
+				"RealGreenletService	(imported, class)"
+			],
+			[
+				"raise",
+				"raise_error"
+			],
+			[
+				"ra",
+				"raise_error	(attribute, instance)"
+			],
+			[
+				"Rea",
+				"RealGreenletService	(imported, class)"
+			],
+			[
+				"assert_Ca",
+				"assert_called_once_with"
+			],
+			[
+				"publish",
+				"publish_to	(attribute, instance)"
+			],
+			[
+				"su",
+				"subscribe"
+			],
+			[
+				"post_",
+				"post_subscribe	(attribute, function)"
+			],
+			[
+				"retun",
+				"return_value"
+			],
+			[
+				"__sub",
+				"__subscription_thread	(attribute, instance)"
+			],
+			[
+				"cus",
+				"custom_channel"
+			],
+			[
+				"mo",
+				"Mock"
+			],
+			[
+				"list",
+				"listen_to_name	(attribute, instance)"
+			],
+			[
+				"log",
+				"logic	(attribute, instance)"
+			],
+			[
+				"pub",
+				"publish_to	(local, instance)"
+			],
+			[
+				"publ",
+				"publish_to	(attribute, instance)"
+			],
+			[
+				"ls",
+				"listen_to	(attribute, instance)"
+			],
+			[
+				"chann",
+				"channels	(attribute, instance)"
+			],
+			[
+				"lo",
+				"logic	(local, instance)"
+			],
+			[
+				"Cha",
+				"ChattrService	(global, class)"
+			],
+			[
+				"__d",
+				"__dict__"
+			],
+			[
+				"cac",
+				"cached_property"
+			],
+			[
+				"l",
+				"logic	(attribute, instance)"
+			],
+			[
+				"DE",
+				"DEFAULT_LOGIC	(attribute, instance)"
+			],
+			[
+				"ass",
+				"assert_called_with	(attribute, function)"
+			],
+			[
+				"Test",
+				"TestChattrService"
+			],
+			[
+				"assertEq",
+				"assertEquals	(attribute, instance)"
+			],
+			[
+				"Pu",
+				"PUB_CHANNEL	(attribute, instance)"
+			],
+			[
+				"li",
+				"listen_to	(local, instance)"
+			],
+			[
+				"pu",
+				"publish_to"
+			],
+			[
+				"cust",
+				"custom_channel	(local, function)"
+			],
+			[
+				"cha",
+				"channel	(attribute, instance)"
+			],
+			[
+				"io",
+				"io"
+			],
+			[
+				"channe",
+				"channel_name	(local, instance)"
+			],
+			[
+				"mod",
+				"modules	(builtin, instance)"
+			],
+			[
+				"ser",
+				"service	(local, instance)"
+			],
+			[
+				"M",
+				"MockService	(global, class)"
+			],
+			[
+				"test",
+				"test	New test template"
+			],
+			[
+				"global",
+				"global_config	(imported, instance)"
+			],
+			[
+				"si",
+				"side_effect"
+			],
+			[
+				"our",
+				"our_options	(local, instance)"
+			],
+			[
+				"par",
+				"parse_args	(local, instance)"
+			],
+			[
+				"parse",
+				"parse_args"
+			],
+			[
+				"exp",
+				"expected_options	(local, instance)"
+			],
+			[
+				"asser",
+				"assert_called_once_with"
+			],
+			[
+				"sa",
+				"sample	(attribute, instance)"
+			],
+			[
+				"sam",
+				"sample_module	(attribute, instance)"
+			],
+			[
+				"ar",
+				"argv"
+			],
+			[
+				"gloal",
+				"global_config	(imported, instance)"
+			],
+			[
+				"base",
+				"base_logging_config	(global, instance)"
+			],
+			[
+				"merge",
+				"merge_config	(global, function)"
+			],
+			[
+				"__doc",
+				"__dict_from_config_file	(global, function)"
+			],
+			[
+				"gloa",
+				"global_config	(imported, instance)"
+			],
+			[
+				"min",
+				"minimalist	(local, instance)"
+			],
+			[
+				"add",
+				"added_config	(local, instance)"
+			],
+			[
+				"Co",
+				"ColorizingStreamHandler	(global, class)"
+			],
+			[
+				"logger",
+				"logger_name	(local, instance)"
+			],
+			[
+				"from_",
+				"from_object	(attribute, function)"
+			],
+			[
+				"rai",
+				"raise_only_on_config	(local, function)"
+			],
+			[
+				"fix",
+				"fixtures	(imported, module)"
+			],
+			[
+				"ci",
+				"config_module"
+			],
+			[
+				"No",
+				"NoChildrenToWatch	(global, class)"
+			],
+			[
+				"C",
+				"ConnectionError	(imported, class)"
+			],
+			[
+				"zk",
+				"zkclient"
+			],
+			[
+				"JS",
+				"JsonConfigLoadError	(global, class)"
+			],
+			[
+				"config",
+				"config	(imported, instance)"
+			],
+			[
+				"md",
+				"module_path	(local, instance)"
+			],
+			[
+				"asert",
+				"assertEquals"
+			],
+			[
+				"pa",
+				"package_root	(attribute, instance)"
+			],
+			[
+				"g",
+				"getLogger	(global, function)"
+			],
+			[
+				"return",
+				"return_value"
+			],
+			[
+				"cof",
+				"config_filepath"
+			],
+			[
+				"co",
+				"configuration	(imported, instance)"
+			],
+			[
+				"globl",
+				"global_config	(imported, instance)"
+			],
+			[
+				"De",
+				"DefaultSettings"
+			],
+			[
+				"ch",
+				"children	(global, instance)"
+			],
+			[
+				"watch",
+				"watched_children	(local, instance)"
+			],
+			[
+				"globa",
+				"global_config"
+			],
+			[
+				"Hell",
+				"HelloWorldService"
+			],
+			[
+				"Base",
+				"BaseServiceTest	(global, class)"
+			],
+			[
+				"abs",
+				"abstractproperty	(imported, class)"
+			],
+			[
+				"Abc",
+				"ABCMeta	(imported, class)"
+			],
+			[
+				"ab",
+				"abstractmethod"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "tests/test_dict.py",
+			"settings":
+			{
+				"buffer_size": 10640,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "setup.py",
+			"settings":
+			{
+				"buffer_size": 950,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "testkazoo.py",
+			"settings":
+			{
+				"buffer_size": 85,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "modeldict/base.py",
+			"settings":
+			{
+				"buffer_size": 3022,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "modeldict/dict.py",
+			"settings":
+			{
+				"buffer_size": 7873,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "Packages/User/nosetests.sublime-build",
+	"command_palette":
+	{
+		"height": 71.0,
+		"selected_items":
+		[
+			[
+				"pytho",
+				"Set Syntax: Python"
+			],
+			[
+				"disable ",
+				"SublimeLinter: Disable Linting"
+			],
+			[
+				"git blame",
+				"Git: Blame"
+			],
+			[
+				"blame",
+				"Git: Blame"
+			],
+			[
+				"python",
+				"Set Syntax: Python"
+			],
+			[
+				"disable l",
+				"SublimeLinter: Disable Linting"
+			],
+			[
+				"wrap",
+				"Word Wrap: Toggle"
+			],
+			[
+				"rope",
+				"Rope: Show Documentation"
+			],
+			[
+				"rename",
+				"Rope Refactoring: Rename"
+			],
+			[
+				"refactr",
+				"Rope Refactoring: Rename"
+			],
+			[
+				"pyth",
+				"Set Syntax: Python"
+			],
+			[
+				"curre",
+				"Snippet: current_dir"
+			],
+			[
+				"lint",
+				"SublimeLinter: Extract Annotations"
+			],
+			[
+				"doc",
+				"Rope: Show Documentation"
+			],
+			[
+				"curren",
+				"Snippet: current_dir"
+			],
+			[
+				"paca",
+				"Package Control: Install Package"
+			],
+			[
+				"Pac",
+				"Package Control: Enable Package"
+			],
+			[
+				"upd",
+				"Package Control: Upgrade Package"
+			],
+			[
+				"list pa",
+				"Package Control: List Packages"
+			],
+			[
+				"show",
+				"Rope: Show Documentation"
+			],
+			[
+				"Rope",
+				"Rope: New Project"
+			],
+			[
+				"install page",
+				"Package Control: Install Package"
+			],
+			[
+				"pack ainge",
+				"Package Control: Install Package"
+			],
+			[
+				"package ",
+				"Package Control: Upgrade Package"
+			],
+			[
+				"rope go",
+				"Rope: Go to Definition"
+			],
+			[
+				"ROPE NEW P",
+				"Rope: New Project"
+			],
+			[
+				"list pack",
+				"Package Control: List Packages"
+			],
+			[
+				"got o",
+				"Rope: Go to Definition"
+			],
+			[
+				"package",
+				"Package Control: List Packages"
+			],
+			[
+				"git check",
+				"Git: Checkout Current File"
+			],
+			[
+				"linting",
+				"SublimeLinter: Disable Background Linting"
+			],
+			[
+				"snipper",
+				"Snippet: current_dir"
+			],
+			[
+				"rope ",
+				"Rope: Show Documentation"
+			],
+			[
+				"bash",
+				"Set Syntax: Shell Script (Bash)"
+			],
+			[
+				"disable bac",
+				"SublimeLinter: Disable Background Linting"
+			],
+			[
+				"rope new",
+				"Rope: New Project"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"packa",
+				"Preferences: Browse Packages"
+			],
+			[
+				"browse",
+				"Preferences: Browse Packages"
+			],
+			[
+				"package ins",
+				"Package Control: Install Package"
+			],
+			[
+				"upgrade",
+				"Package Control: Upgrade/Overwrite All Packages"
+			],
+			[
+				"install pac",
+				"Package Control: Install Package"
+			],
+			[
+				"upgg",
+				"Package Control: Upgrade/Overwrite All Packages"
+			],
+			[
+				"pac",
+				"Package Control: Add Repository"
+			],
+			[
+				"packa ge cont",
+				"Package Control: Add Repository"
+			],
+			[
+				"git bla e",
+				"Git: Blame"
+			],
+			[
+				"link di",
+				"SublimeLinter: Disable Background Linting"
+			],
+			[
+				"lint error",
+				"SublimeLinter: Show Error List"
+			],
+			[
+				"package contr",
+				"Package Control: Install Package"
+			],
+			[
+				"package instal",
+				"Package Control: Install Package"
+			],
+			[
+				"pacakge ",
+				"Package Control: Install Package"
+			],
+			[
+				"shell",
+				"Set Syntax: Shell Script (Bash)"
+			],
+			[
+				"lint file",
+				"File: New View into File"
+			],
+			[
+				"lint current",
+				"SublimeLinter: Lint Current File"
+			],
+			[
+				"lint efile",
+				"SublimeLinter: Lint Current File"
+			],
+			[
+				"linter",
+				"SublimeLinter: Show Error List"
+			],
+			[
+				"finder",
+				"View: Toggle Open Files in Side Bar"
+			],
+			[
+				"w",
+				"Word Wrap: Toggle"
+			],
+			[
+				"lint errr",
+				"SublimeLinter: Show Error List"
+			],
+			[
+				"lint erro",
+				"SublimeLinter: Show Error List"
+			],
+			[
+				"css",
+				"Set Syntax: CSS"
+			],
+			[
+				"pack cont",
+				"Package Control: Install Package"
+			],
+			[
+				"package con",
+				"Package Control: Install Package"
+			],
+			[
+				"lint err",
+				"SublimeLinter: Show Error List"
+			],
+			[
+				"lint erorr",
+				"SublimeLinter: Show Error List"
+			],
+			[
+				"list pak",
+				"Package Control: List Packages"
+			],
+			[
+				"pacage list",
+				"Package Control: List Packages"
+			],
+			[
+				"list pac",
+				"Package Control: List Packages"
+			],
+			[
+				"remove pa",
+				"Package Control: Remove Package"
+			],
+			[
+				"pack list",
+				"Package Control: List Packages"
+			],
+			[
+				"packag",
+				"Package Control: Install Package"
+			],
+			[
+				"add",
+				"Package Control: Add Repository"
+			],
+			[
+				"pacakg",
+				"Package Control: Install Package"
+			],
+			[
+				"lint errors",
+				"SublimeLinter: Show Error List"
+			],
+			[
+				"coffee",
+				"Set Syntax: CoffeeScript"
+			],
+			[
+				"plain",
+				"Set Syntax: Plain Text"
+			],
+			[
+				"java",
+				"Set Syntax: JavaScript"
+			],
+			[
+				"ruby",
+				"Set Syntax: Ruby"
+			],
+			[
+				"javasc",
+				"Set Syntax: JavaScript"
+			],
+			[
+				"toggle",
+				"View: Toggle Open Files in Side Bar"
+			],
+			[
+				"wrap ",
+				"Word Wrap: Toggle"
+			],
+			[
+				"linter error",
+				"SublimeLinter: Show Error List"
+			],
+			[
+				"linter errors",
+				"SublimeLinter: Show Error List"
+			],
+			[
+				"lint reset",
+				"SublimeLinter: Reset"
+			],
+			[
+				"submeLinter",
+				"SublimeLinter: Lint Current File"
+			],
+			[
+				"show ",
+				"SublimeLinter: Show Error List"
+			],
+			[
+				"liner show",
+				"SublimeLinter: Show Error List"
+			],
+			[
+				"remove",
+				"Package Control: Remove Package"
+			],
+			[
+				"inst",
+				"Package Control: Install Package"
+			],
+			[
+				"pacl",
+				"Package Control: Install Package"
+			],
+			[
+				"djan",
+				"Set Syntax: Python Django"
+			],
+			[
+				"dja",
+				"Set Syntax: Python Django"
+			],
+			[
+				"djang",
+				"Set Syntax: Python Django"
+			],
+			[
+				" pack",
+				"Package Control: Install Package"
+			],
+			[
+				"install p",
+				"Package Control: Install Package"
+			],
+			[
+				"pack instal",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 435.0
+	},
+	"console":
+	{
+		"height": 264.0
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/usr/local/etc/zookeeper/zoo.cfg",
+		"/Users/jeff/Code/modeldict/setup.py",
+		"/Users/jeff/Code/modeldict/LICENSE",
+		"/Users/jeff/Code/disqus/disqus/achievements/api/endpoints.py",
+		"/Users/jeff/Code/disqus/disqus/api/models.py",
+		"/Users/jeff/Code/disqus/disqus/dtpl/models.py",
+		"/Users/jeff/Code/disqus/disqus/authx/models.py",
+		"/Users/jeff/Code/disqus/disqus/embed/custom/views.py",
+		"/Users/jeff/Code/disqus/disqus/common/uploads.py",
+		"/Users/jeff/Code/disqus/disqus/forums/models.py",
+		"/Users/jeff/Code/disqus/disqus/achievements/models.py",
+		"/Users/jeff/Code/disqus/disqus/templates/v5/admin/settings/appearance.html",
+		"/Users/jeff/Code/disqus/disqus/context_processors.py",
+		"/Users/jeff/Code/disqus/disqus/admin/views/main.py",
+		"/Users/jeff/Code/disqus/disqus/common/shortcuts.py",
+		"/Users/jeff/Code/disqus/disqus/admin/views/settings.py",
+		"/Users/jeff/Code/disqus/disqus/scripts/compile_forum_styles.py",
+		"/Users/jeff/Code/disqus/tests/unit/disqus/importer/parsers/wxr/fixtures/columbuspride_1218569759.xml",
+		"/Users/jeff/Code/disqus/disqus/admin/internal/views.py",
+		"/Users/jeff/Code/disqus/disqus/admin/internal/urls.py",
+		"/Users/jeff/Code/disqus/disqus/conf/settings/default.py",
+		"/Users/jeff/Code/disqus/disqus/templates/admin/internal_admin/index_base.html",
+		"/Users/jeff/Code/disqus/disqus/templates/admin/internal_admin/partner_search.html",
+		"/Users/jeff/Code/disqus/disqus/admin/internal/forms.py",
+		"/Users/jeff/Code/disqus/disqus/forums/api/transformers.py",
+		"/Users/jeff/Code/disqus/disqus/achievements/helpers.py",
+		"/Users/jeff/Code/disqus/disqus/utils/avatars.py",
+		"/Users/jeff/Code/disqus/tests/unit/disqus/common/uploads/tests.py",
+		"/Users/jeff/Code/disqus/disqus/common/statsd/__init__.py",
+		"/Users/jeff/Code/disqus/disqus/common/statsd/decorators.py",
+		"/Users/jeff/Code/disqus/disqus/sexyapi/controller.py",
+		"/Users/jeff/Code/disqus/disqus/admin/json.py",
+		"/Users/jeff/Code/disqus/disqus/common/sessions/redis.py",
+		"/Users/jeff/Code/disqus/disqus/application.py",
+		"/Users/jeff/Code/disqus/disqus/conf/settings/dev.py",
+		"/Users/jeff/Code/disqus/tests/unit/disqus/authx/models/tests.py",
+		"/Users/jeff/Code/disqus/tests/unit/disqus/forums/models/forums/tests.py",
+		"/Users/jeff/Code/disqus-service/tests/disqus/service/test_application.py",
+		"/Users/jeff/Code/disqus-service/Makefile",
+		"/Users/jeff/Code/disqus-service/src/disqus/service/application.py",
+		"/Users/jeff/Code/disqus-service/build/lib/disqus/service/configuration/application.py",
+		"/Users/jeff/Code/disqus-service/src/disqus/service/configuration/application.py",
+		"/Users/jeff/Code/disqus-service/setup.cfg",
+		"/Users/jeff/Code/disqus-service/setup.py",
+		"/Users/jeff/Code/disqus-service/src/disqus/__init__.py",
+		"/Users/jeff/Code/disqus-service/tests/disqus/test_service.py",
+		"/Users/jeff/Code/disqus-service/tests/disqus/service/test_cli.py",
+		"/Users/jeff/Code/disqus-service/src/disqus/service/configuration/__init__.py",
+		"/Users/jeff/Code/disqus-service/src/disqus/service/logging.py",
+		"/Users/jeff/Code/disqus-service/src/disqus/service/cli.py",
+		"/Users/jeff/Code/disqus-service/sample/hang.py",
+		"/Users/jeff/.virtualenvs/disqus-service/lib/python2.6/site-packages/watchdog-0.6.0-py2.6-macosx-10.7-intel.egg/watchdog/observers/polling.py",
+		"/Users/jeff/.virtualenvs/disqus-service/lib/python2.6/site-packages/watchdog-0.6.0-py2.6-macosx-10.7-intel.egg/watchdog/observers/api.py",
+		"/Users/jeff/Code/disqus-service/src/disqus/service/defaults/logging.json",
+		"/Users/jeff/.virtualenvs/disqus-service/lib/python2.6/site-packages/kazoo-0.2b1-py2.6.egg-info/installed-files.txt",
+		"/Users/jeff/.virtualenvs/disqus-service/lib/python2.6/site-packages/kazoo-0.2dev-py2.6.egg",
+		"/Users/jeff/Code/disqus-service/README.md",
+		"/Users/jeff/Code/disqus-service/tests/disqus/service/test_runner.py",
+		"/System/Library/Frameworks/Python.framework/Versions/2.6/lib/python2.6/optparse.py",
+		"/Users/jeff/Code/disqus-service/src/disqus/service/concurrency.py",
+		"/Users/jeff/Code/disqus-service/src/disqus/service/runner.py",
+		"/Users/jeff/Code/disqus-service/tests/test_integration.py",
+		"/Users/jeff/Code/disqus-service/sample/kazoo_bug.py",
+		"/Users/jeff/Code/disqus-service/tests/disqus/service/configuration/test_zookeeper.py",
+		"/Users/jeff/Code/disqus-service/src/disqus/service/configuration/zookeeper.py",
+		"/Users/jeff/Code/disqus-service/src/disqus/service/configuration/join.py",
+		"/Users/jeff/Code/disqus-service/build/lib/disqus/service/application.py",
+		"/System/Library/Frameworks/Python.framework/Versions/2.6/lib/python2.6/logging/__init__.py",
+		"/Users/jeff/.virtualenvs/chattr.io/lib/python2.6/site-packages/disqus/service/functional.py",
+		"/Users/jeff/Code/disqus-service/.gitignore",
+		"/Users/jeff/Code/disqus-service/sample/kazoo.py",
+		"/Users/jeff/Code/disqus-service/demo/hang.py",
+		"/Users/jeff/.virtualenvs/chattr.io/lib/python2.6/site-packages/watchdog/observers/polling.py",
+		"/Users/jeff/.virtualenvs/chattr.io/lib/python2.6/site-packages/watchdog/observers/api.py",
+		"/Users/jeff/Code/disqus-service/src/disqus/service/cli_gevent_monkey.py",
+		"/Users/jeff/Code/disqus-service/src/disqus/service/cli_monkey.py",
+		"/Users/jeff/Code/disqus-service/tests/disqus/service/fixtures/config/default_settings.py",
+		"/Users/jeff/Code/disqus-service/tests/util.py",
+		"/Users/jeff/Code/disqus-service/tests/disqus/service/fixtures/service.py",
+		"/Users/jeff/Code/disqus-service/src/disqus/service/util.py",
+		"/Users/jeff/Code/disqus-service/src/disqus/service/demo.py",
+		"/Users/jeff/Code/disqus-service/src/disqus/service/generators.py",
+		"/Users/jeff/Code/disqus-service/src/disqus/service/functional.py",
+		"/usr/local/Cellar/python/2.7.2/lib/python2.7/site-packages/kazoo/client.py",
+		"/Users/jeff/Code/disqus-service/src/disqus/service/configuration/envvars.py",
+		"/Users/jeff/Code/disqus-service/spam.py",
+		"/Users/jeff/Code/disqus-service/tests/disqus/service/configuration/test_envvar.py",
+		"/Users/jeff/Code/disqus-service/src/spam.py",
+		"/Users/jeff/Code/disqus-service/src/from redis import Redis",
+		"/Users/jeff/Code/disqus-service/tests/disqus/service/configuration/test_application.py",
+		"/Users/jeff/Code/disqus-service/src/disqus/service/junk.py",
+		"/Users/jeff/Code/disqus-service/src/disqus/service/configuration/shared.py",
+		"/Users/jeff/Code/disqus-service/.arcconfig",
+		"/Users/jeff/Code/disqus-service/tests/disqus/service/configuration/test_shared.py",
+		"/Users/jeff/Library/Application Support/Sublime Text 2/Packages/User/Preferences.sublime-settings",
+		"/Users/jeff/Code/disqus-service/tests/disqus/service/test_logging.py",
+		"/Users/jeff/Code/disqus-service/src/disqus/service/example/services.py",
+		"/Users/jeff/Code/disqus-service/tests/__init__.py",
+		"/Users/jeff/Code/disqus-service/streaming_test.py",
+		"/Users/jeff/Code/disqus-service/debug/streaming_test.py",
+		"/Users/jeff/Code/disqus-service/tests/disqus/service/TODO",
+		"/Users/jeff/Code/disqus-service/src/disqus/service/test.py",
+		"/Users/jeff/Code/disqus-service/test.py",
+		"/Users/jeff/Code/disqus-service/tests/disqus/service/test.py",
+		"/Users/jeff/Code/disqus-service/descriptor.py",
+		"/Users/jeff/Code/disqus-service/tests/disqus/service/descriptor.py",
+		"/Users/jeff/Code/chattr.io/specs/src/chattr/specs/__init__.py",
+		"/Users/jeff/Code/chattr.io/client/setup.py",
+		"/Users/jeff/Code/disqus-service/tests/disqus/service/test_generators.py",
+		"/Users/jeff/Code/disqus-service/sample/__init__.py",
+		"/Users/jeff/Code/disqus-service/tests/disqus/service/configuration/test_join.py",
+		"/Users/jeff/.virtualenvs/disqus-service/lib/python2.6/site-packages/unittest2/case.py",
+		"/Users/jeff/Code/disqus-service/tests/disqus/service/test_configuration.py",
+		"/Users/jeff/Code/disqus-service/src/disqus/service/stats/__init__.py",
+		"/Users/jeff/.virtualenvs/disqus-service/lib/python2.6/site-packages/zc/zk/__init__.py",
+		"/Users/jeff/Code/disqus-service/tests/disqus/service/fixtures/__init__.py",
+		"/Users/jeff/Code/disqus-service/tests/disqus/service/test_util.py",
+		"/Users/jeff/Code/disqus-service/src/disqus/service/__init__.py",
+		"/Users/jeff/Code/disqus-service/src/disqus/service/stats.py",
+		"/Users/jeff/Code/disqus-service/src/disqus/service/spawn.py",
+		"/Users/jeff/Code/disqus-service/src/disqus/service/processors.py",
+		"/Users/jeff/Code/disqus-service/src/disqus/service/json.py",
+		"/Users/jeff/Code/disqus-service/src/disqus/service/stats/lazy.py",
+		"/Users/jeff/Code/disqus-service/src/disqus/service/stats/helpers.py",
+		"/Users/jeff/Code/disqus-service/tests/disqus/service/fixtures/config/local_settings.py",
+		"/Users/jeff/Code/disqus-service/nose.cfg",
+		"/Users/jeff/Code/disqus-service/src/disqus/service/configuration/default.py",
+		"/Users/jeff/Code/disqus-service/tests/disqus/service/configuration/test_default.py"
+	],
+	"find":
+	{
+		"height": 33.0
+	},
+	"find_in_files":
+	{
+		"height": 95.0,
+		"where_history":
+		[
+			"*.py",
+			"*",
+			"*.py",
+			"*.html",
+			"*.py",
+			"*",
+			"config_package",
+			"",
+			"*.py",
+			"dimen",
+			"*.py",
+			"*",
+			"*.py",
+			"*",
+			"*.py",
+			"*url*.py",
+			"*.py",
+			"/Users/jeff/Code/disqus/tests",
+			"*.py",
+			"tests/",
+			"*.py",
+			"*",
+			"    ",
+			"",
+			"*.py",
+			"*",
+			"",
+			"*.py",
+			"",
+			"*",
+			"*.py",
+			"tests/*",
+			"*",
+			"*.py",
+			"",
+			"*.py",
+			"*urls*.py",
+			"*.py",
+			"",
+			"*.py",
+			"",
+			"*tests*",
+			"*",
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": true,
+		"find_history":
+		[
+			"zk",
+			"foo",
+			")\n",
+			"sync",
+			"self.fa",
+			"def get",
+			"print",
+			"self.new_dict",
+			"self.new_dict =",
+			"self.new_dict =\\",
+			"self.new_dict =",
+			"new_dict",
+			"(izip(izip",
+			", ",
+			"epoch",
+			", filename",
+			"filename",
+			", filename",
+			"_url_for",
+			", filename",
+			"filename",
+			"filepath",
+			".save",
+			"avatar\\.filepath",
+			"filename",
+			"FILENAME",
+			"DEFAULT_FILENAME",
+			"self.DEFAULT_FILENAME",
+			"self.FILENAME",
+			"FILENAME =",
+			"FILENAME",
+			"filename=",
+			"_url_for",
+			"FILENAME",
+			"epoch",
+			"1234567",
+			"path_segments",
+			"UploadDescriptor",
+			"path_segments",
+			"epoch",
+			"Avatar",
+			"UploadDescriptor",
+			"final_filepath",
+			"infile",
+			"css_file",
+			"tempfile",
+			"flatten",
+			"tempfile",
+			"compile_styles",
+			"/ 10000",
+			" get_theme_dir_base",
+			"settings.MEDIA_ROOT",
+			"v5",
+			"version",
+			"v5",
+			"DISQUS_PATH =",
+			"compile_styles",
+			"appearance_save",
+			"compile_styles",
+			"upload",
+			"Integration",
+			"upload",
+			"get_upload_path",
+			"get_favicon_url",
+			"get_upload_url",
+			"update_icon",
+			"PartnerSettingsForm",
+			"DISQUS_ADMIN",
+			"partners",
+			"add_partner",
+			"Partner",
+			"partner",
+			"partners",
+			"partner",
+			"Partner",
+			"Partners",
+			"partner_search",
+			"Partners",
+			"Funnels",
+			"get_upload_path",
+			"Partner",
+			"access_control",
+			"max_blacklisted_words",
+			"Partner",
+			"max_blacklisted_words",
+			"Partner",
+			"get_upload_url",
+			"get_favicon_url",
+			"get_upload_url",
+			"Partner",
+			"get_upload_path",
+			"save_favicon",
+			"get_favicon_url",
+			"get_upload_url",
+			"Partner",
+			"get_favicon_url",
+			"get_upload_url",
+			"get_icon_url_for_rank",
+			"get_upload_url",
+			"get_icon_url",
+			"update_icon",
+			"save_rank_icon",
+			"update_icon",
+			"save_rank_icon",
+			"UploadDesc",
+			"get_upload_path",
+			"CustomRank",
+			"get_upload_path",
+			"Partner",
+			"get_favicon_url",
+			"get_upload_url",
+			"boto.config",
+			"timeout",
+			"Timeout",
+			"timeout",
+			"logger",
+			"log.*exception",
+			"sentry.*error",
+			"sentry.*log",
+			"stentry.*log",
+			"Timer",
+			"with.*stats",
+			"with.*tim",
+			"with.*timing",
+			"timing",
+			"S3",
+			"assertIsInstance",
+			"OverwriteFileSystemStorage"
+		],
+		"highlight": false,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"avatar_save_s3",
+			"avatar_duplex_save",
+			"duplex_avatar_saves=False, s3_avatar_saves=False",
+			"duplex_avatar_saves",
+			"TransitionalOverwriteFileSystemStorage",
+			"transional_s3_avatars",
+			"    ",
+			"config_package",
+			"side_effect",
+			"",
+			"TestCase",
+			"from tests.util import fixture, TestCase",
+			"from tests.util import fixture",
+			"from test.util import fixture",
+			"get_avatar_url_for_user",
+			"dimension",
+			"get_enabled_multiplexers",
+			"]",
+			"ImprovedTransactionTestCase",
+			"connections_support_transactions",
+			"(DisqusTest):",
+			"(DisqusTestCase):",
+			"    ",
+			"disqus.conf.settings.default",
+			"diqus.conf.settings.default",
+			";\\n",
+			"patch('gargoyle.client.",
+			"from gargoyle.client",
+			"    ",
+			"Manager",
+			"_decode",
+			"_encode",
+			"    ",
+			"redis",
+			"    ",
+			"admin=True, edit=True",
+			"admin=False, edit=True",
+			"admin=True, edit=False",
+			"admin=True, edit=True"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 2,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "tests/test_dict.py",
+					"settings":
+					{
+						"buffer_size": 10640,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								9813,
+								9813
+							]
+						],
+						"settings":
+						{
+							"annotations":
+							[
+								"TODO",
+								"README",
+								"FIXME"
+							],
+							"csslint_options":
+							{
+								"adjoining-classes": "warning",
+								"box-model": true,
+								"box-sizing": "warning",
+								"compatible-vendor-prefixes": "warning",
+								"display-property-grouping": true,
+								"duplicate-background-images": "warning",
+								"duplicate-properties": true,
+								"empty-rules": true,
+								"errors": true,
+								"fallback-colors": "warning",
+								"floats": "warning",
+								"font-faces": "warning",
+								"font-sizes": "warning",
+								"gradients": "warning",
+								"ids": "warning",
+								"import": "warning",
+								"important": "warning",
+								"known-properties": true,
+								"outline-none": "warning",
+								"overqualified-elements": "warning",
+								"qualified-headings": "warning",
+								"regex-selectors": "warning",
+								"rules-count": "warning",
+								"shorthand": "warning",
+								"star-property-hack": "warning",
+								"text-indent": "warning",
+								"underscore-property-hack": "warning",
+								"unique-headings": "warning",
+								"universal-selector": "warning",
+								"vendor-prefix": true,
+								"zero-units": "warning"
+							},
+							"gjslint_ignore":
+							[
+								110.0
+							],
+							"gjslint_options":
+							[
+							],
+							"javascript_linter": "jshint",
+							"jshint_options":
+							{
+								"browser": true,
+								"evil": true,
+								"regexdash": true,
+								"sub": true,
+								"trailing": true,
+								"wsh": true
+							},
+							"pep8": true,
+							"pep8_ignore":
+							[
+								"E501"
+							],
+							"perl_linter": "perlcritic",
+							"pyflakes_ignore":
+							[
+							],
+							"pyflakes_ignore_import_*": true,
+							"sublimelinter": true,
+							"sublimelinter_delay": 2.0,
+							"sublimelinter_disable":
+							[
+							],
+							"sublimelinter_executable_map":
+							{
+							},
+							"sublimelinter_fill_outlines": false,
+							"sublimelinter_gutter_marks": false,
+							"sublimelinter_mark_style": "outline",
+							"sublimelinter_notes": false,
+							"sublimelinter_objj_check_ascii": false,
+							"sublimelinter_popup_errors_on_save": false,
+							"sublimelinter_syntax_map":
+							{
+								"Python Django": "python",
+								"Ruby on Rails": "ruby"
+							},
+							"sublimelinter_wrap_find": true,
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 3939.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "setup.py",
+					"settings":
+					{
+						"buffer_size": 950,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								471,
+								471
+							]
+						],
+						"settings":
+						{
+							"annotations":
+							[
+								"TODO",
+								"README",
+								"FIXME"
+							],
+							"csslint_options":
+							{
+								"adjoining-classes": "warning",
+								"box-model": true,
+								"box-sizing": "warning",
+								"compatible-vendor-prefixes": "warning",
+								"display-property-grouping": true,
+								"duplicate-background-images": "warning",
+								"duplicate-properties": true,
+								"empty-rules": true,
+								"errors": true,
+								"fallback-colors": "warning",
+								"floats": "warning",
+								"font-faces": "warning",
+								"font-sizes": "warning",
+								"gradients": "warning",
+								"ids": "warning",
+								"import": "warning",
+								"important": "warning",
+								"known-properties": true,
+								"outline-none": "warning",
+								"overqualified-elements": "warning",
+								"qualified-headings": "warning",
+								"regex-selectors": "warning",
+								"rules-count": "warning",
+								"shorthand": "warning",
+								"star-property-hack": "warning",
+								"text-indent": "warning",
+								"underscore-property-hack": "warning",
+								"unique-headings": "warning",
+								"universal-selector": "warning",
+								"vendor-prefix": true,
+								"zero-units": "warning"
+							},
+							"gjslint_ignore":
+							[
+								110.0
+							],
+							"gjslint_options":
+							[
+							],
+							"javascript_linter": "jshint",
+							"jshint_options":
+							{
+								"browser": true,
+								"evil": true,
+								"regexdash": true,
+								"sub": true,
+								"trailing": true,
+								"wsh": true
+							},
+							"pep8": true,
+							"pep8_ignore":
+							[
+								"E501"
+							],
+							"perl_linter": "perlcritic",
+							"pyflakes_ignore":
+							[
+							],
+							"pyflakes_ignore_import_*": true,
+							"sublimelinter": true,
+							"sublimelinter_delay": 2.0,
+							"sublimelinter_disable":
+							[
+							],
+							"sublimelinter_executable_map":
+							{
+							},
+							"sublimelinter_fill_outlines": false,
+							"sublimelinter_gutter_marks": false,
+							"sublimelinter_mark_style": "outline",
+							"sublimelinter_notes": false,
+							"sublimelinter_objj_check_ascii": false,
+							"sublimelinter_popup_errors_on_save": false,
+							"sublimelinter_syntax_map":
+							{
+								"Python Django": "python",
+								"Ruby on Rails": "ruby"
+							},
+							"sublimelinter_wrap_find": true,
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "testkazoo.py",
+					"settings":
+					{
+						"buffer_size": 85,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								54,
+								54
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		},
+		{
+			"selected": 1,
+			"sheets":
+			[
+				{
+					"buffer": 3,
+					"file": "modeldict/base.py",
+					"settings":
+					{
+						"buffer_size": 3022,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1917,
+								1917
+							]
+						],
+						"settings":
+						{
+							"annotations":
+							[
+								"TODO",
+								"README",
+								"FIXME"
+							],
+							"csslint_options":
+							{
+								"adjoining-classes": "warning",
+								"box-model": true,
+								"box-sizing": "warning",
+								"compatible-vendor-prefixes": "warning",
+								"display-property-grouping": true,
+								"duplicate-background-images": "warning",
+								"duplicate-properties": true,
+								"empty-rules": true,
+								"errors": true,
+								"fallback-colors": "warning",
+								"floats": "warning",
+								"font-faces": "warning",
+								"font-sizes": "warning",
+								"gradients": "warning",
+								"ids": "warning",
+								"import": "warning",
+								"important": "warning",
+								"known-properties": true,
+								"outline-none": "warning",
+								"overqualified-elements": "warning",
+								"qualified-headings": "warning",
+								"regex-selectors": "warning",
+								"rules-count": "warning",
+								"shorthand": "warning",
+								"star-property-hack": "warning",
+								"text-indent": "warning",
+								"underscore-property-hack": "warning",
+								"unique-headings": "warning",
+								"universal-selector": "warning",
+								"vendor-prefix": true,
+								"zero-units": "warning"
+							},
+							"gjslint_ignore":
+							[
+								110.0
+							],
+							"gjslint_options":
+							[
+							],
+							"javascript_linter": "jshint",
+							"jshint_options":
+							{
+								"browser": true,
+								"evil": true,
+								"regexdash": true,
+								"sub": true,
+								"trailing": true,
+								"wsh": true
+							},
+							"pep8": true,
+							"pep8_ignore":
+							[
+								"E501"
+							],
+							"perl_linter": "perlcritic",
+							"pyflakes_ignore":
+							[
+							],
+							"pyflakes_ignore_import_*": true,
+							"sublimelinter": true,
+							"sublimelinter_delay": 2.0,
+							"sublimelinter_disable":
+							[
+							],
+							"sublimelinter_executable_map":
+							{
+							},
+							"sublimelinter_fill_outlines": false,
+							"sublimelinter_gutter_marks": false,
+							"sublimelinter_mark_style": "outline",
+							"sublimelinter_notes": false,
+							"sublimelinter_objj_check_ascii": false,
+							"sublimelinter_popup_errors_on_save": false,
+							"sublimelinter_syntax_map":
+							{
+								"Python Django": "python",
+								"Ruby on Rails": "ruby"
+							},
+							"sublimelinter_wrap_find": true,
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 482.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "modeldict/dict.py",
+					"settings":
+					{
+						"buffer_size": 7873,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								7865,
+								7865
+							]
+						],
+						"settings":
+						{
+							"annotations":
+							[
+								"TODO",
+								"README",
+								"FIXME"
+							],
+							"csslint_options":
+							{
+								"adjoining-classes": "warning",
+								"box-model": true,
+								"box-sizing": "warning",
+								"compatible-vendor-prefixes": "warning",
+								"display-property-grouping": true,
+								"duplicate-background-images": "warning",
+								"duplicate-properties": true,
+								"empty-rules": true,
+								"errors": true,
+								"fallback-colors": "warning",
+								"floats": "warning",
+								"font-faces": "warning",
+								"font-sizes": "warning",
+								"gradients": "warning",
+								"ids": "warning",
+								"import": "warning",
+								"important": "warning",
+								"known-properties": true,
+								"outline-none": "warning",
+								"overqualified-elements": "warning",
+								"qualified-headings": "warning",
+								"regex-selectors": "warning",
+								"rules-count": "warning",
+								"shorthand": "warning",
+								"star-property-hack": "warning",
+								"text-indent": "warning",
+								"underscore-property-hack": "warning",
+								"unique-headings": "warning",
+								"universal-selector": "warning",
+								"vendor-prefix": true,
+								"zero-units": "warning"
+							},
+							"gjslint_ignore":
+							[
+								110.0
+							],
+							"gjslint_options":
+							[
+							],
+							"javascript_linter": "jshint",
+							"jshint_options":
+							{
+								"browser": true,
+								"evil": true,
+								"regexdash": true,
+								"sub": true,
+								"trailing": true,
+								"wsh": true
+							},
+							"pep8": true,
+							"pep8_ignore":
+							[
+								"E501"
+							],
+							"perl_linter": "perlcritic",
+							"pyflakes_ignore":
+							[
+							],
+							"pyflakes_ignore_import_*": true,
+							"sublimelinter": true,
+							"sublimelinter_delay": 2.0,
+							"sublimelinter_disable":
+							[
+							],
+							"sublimelinter_executable_map":
+							{
+							},
+							"sublimelinter_fill_outlines": false,
+							"sublimelinter_gutter_marks": false,
+							"sublimelinter_mark_style": "outline",
+							"sublimelinter_notes": false,
+							"sublimelinter_objj_check_ascii": false,
+							"sublimelinter_popup_errors_on_save": false,
+							"sublimelinter_syntax_map":
+							{
+								"Python Django": "python",
+								"Ruby on Rails": "ruby"
+							},
+							"sublimelinter_wrap_find": true,
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2994.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 34.0
+	},
+	"input":
+	{
+		"height": 30.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			],
+			[
+				1,
+				0,
+				2,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			0.5,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 98.0
+	},
+	"replace":
+	{
+		"height": 62.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+			[
+				"setu",
+				"setup.py"
+			],
+			[
+				"et",
+				"setup.py"
+			],
+			[
+				"set",
+				"setup.py"
+			],
+			[
+				"dict",
+				"modeldict/dict.py"
+			],
+			[
+				"test",
+				"tests/test_dict.py"
+			],
+			[
+				"base",
+				"modeldict/base.py"
+			],
+			[
+				"achievapiend",
+				"disqus/achievements/api/endpoints.py"
+			],
+			[
+				"forumsmodels",
+				"disqus/forums/models.py"
+			],
+			[
+				"unitcommonuploads",
+				"tests/unit/disqus/common/uploads/tests.py"
+			],
+			[
+				"commonupl",
+				"disqus/common/uploads.py"
+			],
+			[
+				"commonuploa",
+				"disqus/common/uploads.py"
+			],
+			[
+				"authxmodels",
+				"disqus/authx/models.py"
+			],
+			[
+				"appear",
+				"disqus/templates/v5/admin/settings/appearance.html"
+			],
+			[
+				"admininternalviews",
+				"disqus/admin/internal/views.py"
+			],
+			[
+				"internaladminindexbas",
+				"disqus/templates/admin/internal_admin/index_base.html"
+			],
+			[
+				"achievementmodels",
+				"disqus/achievements/models.py"
+			],
+			[
+				"disqusutilsavatars",
+				"disqus/utils/avatars.py"
+			],
+			[
+				"achievementshelpers",
+				"disqus/achievements/helpers.py"
+			],
+			[
+				"commonshor",
+				"disqus/common/shortcuts.py"
+			],
+			[
+				"apimodels",
+				"disqus/api/models.py"
+			],
+			[
+				"commonuploads",
+				"disqus/common/uploads.py"
+			],
+			[
+				"sessionredi",
+				"disqus/common/sessions/redis.py"
+			],
+			[
+				"applica",
+				"disqus/application.py"
+			],
+			[
+				"appl",
+				"disqus/application.py"
+			],
+			[
+				"commonupla",
+				"disqus/common/uploads.py"
+			],
+			[
+				"dev",
+				"disqus/conf/settings/dev.py"
+			],
+			[
+				"settingsdef",
+				"disqus/conf/settings/default.py"
+			],
+			[
+				"commonup",
+				"disqus/common/uploads.py"
+			],
+			[
+				"setup",
+				"setup.py"
+			],
+			[
+				"make",
+				"Makefile"
+			],
+			[
+				"cli",
+				"src/disqus/service/cli.py"
+			],
+			[
+				"logg",
+				"src/disqus/service/defaults/logging.json"
+			],
+			[
+				"configinit",
+				"src/disqus/service/configuration/__init__.py"
+			],
+			[
+				"hang",
+				"sample/hang.py"
+			],
+			[
+				"testc",
+				"tests/disqus/service/test_cli.py"
+			],
+			[
+				"testcli",
+				"tests/disqus/service/test_cli.py"
+			],
+			[
+				"concu",
+				"src/disqus/service/concurrency.py"
+			],
+			[
+				"readme",
+				"README.md"
+			],
+			[
+				"testrunn",
+				"tests/disqus/service/test_runner.py"
+			],
+			[
+				"testrunner",
+				"tests/disqus/service/test_runner.py"
+			],
+			[
+				"concurre",
+				"src/disqus/service/concurrency.py"
+			],
+			[
+				"runner",
+				"src/disqus/service/runner.py"
+			],
+			[
+				"testapp",
+				"tests/disqus/service/test_application.py"
+			],
+			[
+				"rune",
+				"src/disqus/service/runner.py"
+			],
+			[
+				"cconfiginit",
+				"src/disqus/service/configuration/__init__.py"
+			],
+			[
+				"testinte",
+				"tests/test_integration.py"
+			],
+			[
+				"confint",
+				"src/disqus/service/configuration/__init__.py"
+			],
+			[
+				"bug",
+				"sample/kazoo_bug.py"
+			],
+			[
+				"zooke",
+				"tests/disqus/service/configuration/test_zookeeper.py"
+			],
+			[
+				"applc",
+				"src/disqus/service/application.py"
+			],
+			[
+				"zoo",
+				"src/disqus/service/configuration/zookeeper.py"
+			],
+			[
+				"sample",
+				"sample/kazoo_bug.py"
+			],
+			[
+				"sam",
+				"sample/hang.py"
+			],
+			[
+				"joi",
+				"src/disqus/service/configuration/join.py"
+			],
+			[
+				"loggig",
+				"src/disqus/service/logging.py"
+			],
+			[
+				"concur",
+				"src/disqus/service/concurrency.py"
+			],
+			[
+				"applic",
+				"src/disqus/service/application.py"
+			],
+			[
+				"setupcg",
+				"setup.cfg"
+			],
+			[
+				"conc",
+				"src/disqus/service/concurrency.py"
+			],
+			[
+				"con",
+				"src/disqus/service/concurrency.py"
+			],
+			[
+				"join",
+				"src/disqus/service/configuration/join.py"
+			],
+			[
+				"zo",
+				"src/disqus/service/configuration/zookeeper.py"
+			],
+			[
+				"han",
+				"sample/hang.py"
+			],
+			[
+				"kazoo",
+				"sample/kazoo.py"
+			],
+			[
+				"zook",
+				"src/disqus/service/configuration/zookeeper.py"
+			],
+			[
+				"samplehan",
+				"sample/hang.py"
+			],
+			[
+				"logging",
+				"src/disqus/service/logging.py"
+			],
+			[
+				"applicatio",
+				"src/disqus/service/application.py"
+			],
+			[
+				"setp",
+				"setup.py"
+			],
+			[
+				"confiinit",
+				"src/disqus/service/configuration/__init__.py"
+			],
+			[
+				"dem",
+				"demo/hang.py"
+			],
+			[
+				"climon",
+				"src/disqus/service/cli_gevent_monkey.py"
+			],
+			[
+				"app",
+				"src/disqus/service/application.py"
+			],
+			[
+				"configf",
+				"tests/disqus/service/fixtures/config/default_settings.py"
+			],
+			[
+				"confi",
+				"src/disqus/service/configuration/__init__.py"
+			],
+			[
+				"configurationinit",
+				"src/disqus/service/configuration/__init__.py"
+			],
+			[
+				"config",
+				"src/disqus/service/configuration/__init__.py"
+			],
+			[
+				"testzooker",
+				"tests/disqus/service/configuration/test_zookeeper.py"
+			],
+			[
+				"demo",
+				"demo/hang.py"
+			],
+			[
+				"testz",
+				"tests/disqus/service/configuration/test_zookeeper.py"
+			],
+			[
+				"util",
+				"src/disqus/service/util.py"
+			],
+			[
+				"appli",
+				"src/disqus/service/application.py"
+			],
+			[
+				"gen",
+				"src/disqus/service/generators.py"
+			],
+			[
+				"func",
+				"src/disqus/service/functional.py"
+			],
+			[
+				"testenvv",
+				"tests/disqus/service/configuration/test_envvar.py"
+			],
+			[
+				"envv",
+				"src/disqus/service/configuration/envvars.py"
+			],
+			[
+				"spam",
+				"spam.py"
+			],
+			[
+				"configapp",
+				"src/disqus/service/configuration/application.py"
+			],
+			[
+				"confitestapp",
+				"tests/disqus/service/configuration/test_application.py"
+			],
+			[
+				"configappl",
+				"src/disqus/service/configuration/application.py"
+			],
+			[
+				"read",
+				"README.md"
+			],
+			[
+				"setuc",
+				"setup.cfg"
+			],
+			[
+				"tstapplc",
+				"tests/disqus/service/test_application.py"
+			],
+			[
+				"service",
+				"tests/disqus/service/fixtures/service.py"
+			],
+			[
+				"defa",
+				"tests/disqus/service/fixtures/config/default_settings.py"
+			],
+			[
+				"testite",
+				"tests/test_integration.py"
+			],
+			[
+				"testcl",
+				"tests/disqus/service/test_cli.py"
+			],
+			[
+				"cl",
+				"src/disqus/service/cli.py"
+			],
+			[
+				"testzoo",
+				"tests/disqus/service/configuration/test_zookeeper.py"
+			],
+			[
+				"fixser",
+				"tests/disqus/service/fixtures/service.py"
+			],
+			[
+				"testshared",
+				"tests/disqus/service/configuration/test_shared.py"
+			],
+			[
+				"applca",
+				"src/disqus/service/application.py"
+			],
+			[
+				"testconfigapp",
+				"tests/disqus/service/configuration/test_application.py"
+			],
+			[
+				"configapplc",
+				"src/disqus/service/configuration/application.py"
+			],
+			[
+				"fixturser",
+				"tests/disqus/service/fixtures/service.py"
+			],
+			[
+				"testlogg",
+				"tests/disqus/service/test_logging.py"
+			],
+			[
+				"reade",
+				"README.md"
+			],
+			[
+				"testap",
+				"tests/disqus/service/test_application.py"
+			],
+			[
+				"exampleser",
+				"src/disqus/service/example/services.py"
+			],
+			[
+				"testzooke",
+				"tests/disqus/service/configuration/test_zookeeper.py"
+			],
+			[
+				"fixtures",
+				"tests/disqus/service/fixtures/service.py"
+			],
+			[
+				"testappl",
+				"tests/disqus/service/test_application.py"
+			],
+			[
+				"st",
+				"streaming_test.py"
+			],
+			[
+				"testa",
+				"tests/disqus/service/test_application.py"
+			],
+			[
+				"todo",
+				"tests/disqus/service/TODO"
+			],
+			[
+				"dodo",
+				"tests/disqus/service/TODO"
+			],
+			[
+				"setcf",
+				"setup.cfg"
+			],
+			[
+				"testapplica",
+				"tests/disqus/service/test_application.py"
+			],
+			[
+				"test.",
+				"src/disqus/service/test.py"
+			],
+			[
+				"ao",
+				"src/disqus/service/application.py"
+			],
+			[
+				"desc",
+				"descriptor.py"
+			],
+			[
+				"readm",
+				"README.md"
+			],
+			[
+				"testapplic",
+				"tests/disqus/service/test_application.py"
+			],
+			[
+				"gener",
+				"src/disqus/service/generators.py"
+			],
+			[
+				"testgen",
+				"tests/disqus/service/test_generators.py"
+			],
+			[
+				"jo",
+				"src/disqus/service/configuration/join.py"
+			],
+			[
+				"cfg",
+				"setup.cfg"
+			],
+			[
+				"testjoi",
+				"tests/disqus/service/configuration/test_join.py"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"show_minimap": false,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 210.0,
+	"status_bar_visible": true
+}

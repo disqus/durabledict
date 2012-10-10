@@ -36,6 +36,10 @@ class PersistedDict(object):
         self.__sync_with_persistent_storage(force=True)
         return result
 
+    def get(self, key, default=None):
+        self.__sync_with_persistent_storage()
+        return self.__dict.pop(key, default)
+
     def __setitem__(self, key, val):
         self.persist(key, val)
         self.__sync_with_persistent_storage(force=True)
@@ -62,6 +66,10 @@ class PersistedDict(object):
 
     def __repr__(self):
         return self.__dict.__repr__()
+
+    def __contains__(self, key):
+        self.__sync_with_persistent_storage()
+        return self.__dict.__contains__(key)
 
     def __sync_with_persistent_storage(self, force=False):
         if not self.autosync and not force:

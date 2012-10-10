@@ -121,6 +121,18 @@ class BaseTest(object):
         self.assertEquals(self.dict.pop('no_more_keys', 'default'), 'default')
         self.assertRaises(KeyError, self.dict.pop, 'no_more_keys')
 
+    def test_get_works_correctly(self):
+        self.dict['foo'] = 'bar'
+        self.assertEquals('bar', self.dict.get('foo'))
+        self.assertEquals('default', self.dict.get('junk', 'default'))
+        self.assertEquals(None, self.dict.get('junk'))
+
+    def test_contains_works(self):
+        self.assertFalse('foo' in self.dict)
+        self.dict['foo'] = 'bar'
+        self.assertTrue('foo' in self.dict)
+        self.assertFalse('bar' in self.dict)
+
 
 class AutoSyncTrueTest(object):
 

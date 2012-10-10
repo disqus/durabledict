@@ -246,6 +246,52 @@ class ZookeeperDict(PersistedDict):
     zookeeper heirarchy, with the value of the node being the value of that key.
     Each node for each dict key is a child of the "root" node, whose path is
     specified with the ``path`` argument in the constructor.
+
+    NOTE: unlike ``RedisDict`` or ``ModelDict``, which are backed by hightly
+    consistent backend storages, ``ZookeeperDict`` is backed with Zookeeper,
+    which has looser consistency guarantees.
+
+    Please see this page in the Zookeeper docs for details:
+
+    http://zookeeper.apache.org/doc/r3.1.2/zookeeperProgrammers.html#ch_zkGuarantees
+
+    The basic things to keep in mind are:
+
+        Sequential Consistency:
+        Updates from a client will be applied in the order that they were sent.
+
+        Atomicity:
+        Updates either succeed or fail -- there are no partial results.
+
+        Single System Image:
+        A client will see the same view of the service regardless of the server
+        that it connects to.
+
+        Reliability:
+        Once an update has been applied, it will persist from that time forward
+        until a client overwrites the update. This guarantee has two
+        corollaries:
+
+            If a client gets a successful return code, the update will have been
+            applied. On some failures (communication errors, timeouts, etc) the
+            client will not know if the update has applied or not. We take steps
+            to minimize the failures, but the only guarantee is only present
+            with successful return codes. (This is called the monotonicity
+            condition in Paxos.)
+
+            Any updates that are seen by the client, through a read request or
+            successful update, will never be rolled back when recovering from
+            server failures.
+
+        Timeliness:
+        The clients view of the system is guaranteed to be up-to-date within a
+        certain time bound. (On the order of tens of seconds.) Either system
+        changes will be seen by a client within this bound, or the client will
+        detect a service outage.
+
+    The cliff notes version of this is that a client's view of the world will
+    always be consistent (you can read your own writes), but updates from other
+    clients can take time to propogate to other clients.
     """
 
     def __init__(self, zk, path, *args, **kwargs):

@@ -4,11 +4,13 @@ import unittest
 import mock
 
 from redis import Redis
-from modeldict.dict import RedisDict, ModelDict, MemoryDict
+from modeldict.dict import RedisDict, ModelDict, MemoryDict, ZookeeperDict
 from tests.models import Setting
 
 import django.core.management
 from django.core.cache.backends.locmem import LocMemCache
+
+from kazoo.testing.harness import KazooTestHarness
 
 
 class BaseTest(object):
@@ -29,10 +31,13 @@ class BaseTest(object):
         self.assertEquals(self.dict.persistents(), kwargs)
 
     def test_acts_like_a_dictionary(self):
+        print '[TEST] assigning foo=bar'
         self.dict['foo'] = 'bar'
+        print '[TEST] asserting foo==bar'
         self.assertEquals(self.dict['foo'], 'bar')
-
+        print '[TEST] assigning foo2=bar2'
         self.dict['foo2'] = 'bar2'
+        print '[TEST] asserting foo2==bar2'
         self.assertEquals(self.dict['foo2'], 'bar2')
 
     def test_updates_dict_keys(self):
@@ -286,6 +291,19 @@ class TestMemoryDict(BaseTest, AutoSyncTrueTest, unittest.TestCase):
         self.dict['foo'] = obj
 
         self.assertEquals(self.dict.values(), [obj])
+
+
+class TestZookeeperDict(BaseTest, unittest.TestCase, KazooTestHarness):
+
+    def setUp(self):
+        self.setup_zookeeper()  # Makes self.client available as ZK client
+        super(TestZookeeperDict, self).setUp()
+
+    def tearDown(self):
+        self.teardown_zookeeper()
+
+    def new_dict(self):
+        return ZookeeperDict(self.client, '/modeldict/test')
 
 
 class TestRedisDictManualSync(BaseTest, RedisTest, AutoSyncFalseTest, unittest.TestCase):

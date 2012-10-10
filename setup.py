@@ -27,7 +27,8 @@ setup(
         'Django',
         'nose',
         'mock',
-        'redis'
+        'redis',
+        'kazoo'
     ],
     test_suite = 'nose.collector',
     include_package_data=True,

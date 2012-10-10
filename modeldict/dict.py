@@ -227,3 +227,85 @@ class MemoryDict(PersistedDict):
 
     def _decode(self, value):
         return value
+
+
+class ZookeeperDict(PersistedDict):
+    """
+    Dictionary backed by Zookeeper.
+    """
+
+    def __init__(self, zk, path, *args, **kwargs):
+        self.zk = zk
+        self.path = path
+        self.zk.ensure_path(self.path)
+        self._last_updated = 0
+
+        super(ZookeeperDict, self).__init__(*args, **kwargs)
+
+        self.watch = self.zk.ChildrenWatch(
+            self.path,
+            self.__increment_last_updated
+        )
+
+    def last_updated(self):
+        return self._last_updated
+
+    def persist(self, key, value):
+        encoded = self._encode(value)
+        self.__set_or_create(key, encoded)
+        self.__increment_last_updated()
+
+    def depersist(self, key):
+        self.zk.delete(self.__path_of(key))
+        self.__increment_last_updated()
+
+    def persistents(self):
+        results = dict()
+
+        for child in self.zk.get_children(self.path):
+            value, _ = self.zk.get(self.__path_of(child))
+            results[child] = self._decode(value)
+
+        return results
+
+    def _pop(self, key, default=None):
+        path = self.__path_of(key)
+
+        if self.zk.exists(path):
+            value, _ = self.zk.get(path)
+            self.zk.delete(path)
+            self.__increment_last_updated()
+            return self._decode(value)
+        elif default:
+            return default
+        else:
+            raise KeyError
+
+    def _setdefault(self, key, default=None):
+        pathed = self.__path_of(key)
+
+        if self.zk.exists(pathed):
+            value, _ = self.zk.get(pathed)
+            return self._decode(value)
+        else:
+            self.persist(key, default)
+            return default
+
+    def __path_of(self, key):
+        parts = self.path.split('/')
+        parts.append(key)
+
+        return '/'.join(parts)
+
+    def __set_or_create(self, key, value):
+        pathed = self.__path_of(key)
+
+        if self.zk.exists(pathed):
+            func = self.zk.set
+        else:
+            func = self.zk.create
+
+        return func(pathed, value)
+
+    def __increment_last_updated(self, children=None):
+        self._last_updated += 1

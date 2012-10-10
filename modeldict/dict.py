@@ -238,14 +238,14 @@ class ZookeeperDict(PersistedDict):
         self.zk = zk
         self.path = path
         self.zk.ensure_path(self.path)
-        self._last_updated = 0
-
-        super(ZookeeperDict, self).__init__(*args, **kwargs)
+        self._last_updated = None
 
         self.watch = self.zk.ChildrenWatch(
             self.path,
             self.__increment_last_updated
         )
+
+        super(ZookeeperDict, self).__init__(*args, **kwargs)
 
     def last_updated(self):
         return self._last_updated
@@ -308,4 +308,7 @@ class ZookeeperDict(PersistedDict):
         return func(pathed, value)
 
     def __increment_last_updated(self, children=None):
+        if self._last_updated is None:
+            self._last_updated = 0
+
         self._last_updated += 1

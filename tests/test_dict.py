@@ -31,13 +31,9 @@ class BaseTest(object):
         self.assertEquals(self.dict.persistents(), kwargs)
 
     def test_acts_like_a_dictionary(self):
-        print '[TEST] assigning foo=bar'
         self.dict['foo'] = 'bar'
-        print '[TEST] asserting foo==bar'
         self.assertEquals(self.dict['foo'], 'bar')
-        print '[TEST] assigning foo2=bar2'
         self.dict['foo2'] = 'bar2'
-        print '[TEST] asserting foo2==bar2'
         self.assertEquals(self.dict['foo2'], 'bar2')
 
     def test_updates_dict_keys(self):
@@ -316,3 +312,16 @@ class TestModelDictManualSync(BaseTest, ModelDictTest, AutoSyncFalseTest, unitte
 
     def new_dict(self):
         return ModelDict(Setting.objects, key_col='key', cache=self.cache, autosync=False)
+
+
+class TestZookeeperDictManualSync(BaseTest, unittest.TestCase, KazooTestHarness):
+
+    def setUp(self):
+        self.setup_zookeeper()  # Makes self.client available as ZK client
+        super(TestZookeeperDictManualSync, self).setUp()
+
+    def tearDown(self):
+        self.teardown_zookeeper()
+
+    def new_dict(self):
+        return ZookeeperDict(self.client, '/modeldict/test', autosync=False)

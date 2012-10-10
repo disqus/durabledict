@@ -2,8 +2,12 @@ from django.conf import settings
 
 if not settings.configured:
     settings.configure(
-        DATABASE_ENGINE='sqlite3',
-        DATABASE_NAME='test.db',
+        DATABASES={
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': 'test.db'
+            }
+        },
         INSTALLED_APPS=[
             'tests',
         ],

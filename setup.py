@@ -20,8 +20,11 @@ setup(
     zip_safe=False,
     tests_require=[
         'Django',
+        'nose',
+        'mock',
+        'redis'
     ],
-    test_suite = 'runtests.runtests',
+    test_suite = 'nose.collector',
     include_package_data=True,
     classifiers=[
         'Intended Audience :: Developers',

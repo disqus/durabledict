@@ -1,13 +1,18 @@
 #!/usr/bin/env python
 
+import sys
+
+from setuptools import setup, find_packages
+
 try:
-    from setuptools import setup, find_packages
-    from setuptools.command.test import test
+    import multiprocessing  # Seems to fix http://bugs.python.org/issue15881
 except ImportError:
-    from ez_setup import use_setuptools
-    use_setuptools()
-    from setuptools import setup, find_packages
-    from setuptools.command.test import test
+    pass
+
+setup_requires = []
+
+if 'nosetests' in sys.argv[1:]:
+    setup_requires.append('nose')
 
 setup(
     name='modeldict',

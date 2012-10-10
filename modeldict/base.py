@@ -26,9 +26,6 @@ class PersistedDict(object):
     def sync(self):
         self.__sync_with_persistent_storage(force=True)
 
-    def get(self, key, default=None):
-        return self.__getitem__(key) or default
-
     def pop(self, key, default=None):
         result = self._pop(key, default)
         self.__sync_with_persistent_storage(force=True)

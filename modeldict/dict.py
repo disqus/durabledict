@@ -82,9 +82,6 @@ class RedisDict(PersistedDict):
     def __last_update_key(self):
         return self.keyspace + 'last_updated'
 
-    def __contains__(self, key):
-        return self.conn.hexists(self.keyspace, key)
-
 
 class ModelDict(PersistedDict):
     """

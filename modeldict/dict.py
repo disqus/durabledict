@@ -231,10 +231,34 @@ class MemoryDict(PersistedDict):
 
 class ZookeeperDict(PersistedDict):
     """
-    Dictionary backed by Zookeeper.
+    Dictionary backed by Zookeeper.  Functions just as you would expect a normal
+    dictiony to function, except the values in the dictionary are persisted and
+    loaed from Zookeper located at the spcified ``path`` in the constructor.
+
+    Due to Zookeeper's watchers, this dictionary has the nice property that the
+    called to its ``last_updated`` method (to check if the storage has been
+    updated since the dict was last synced) simply returns a cached value -- it
+    does not query Zookeeper or anything like that, so it's basically free.
+    This means that you can run this dictionary with ``autosync=False`` and it
+    will still be reasonably performant.
+
+    Dictionary keys in a ``ZookeeperDict`` are stored at inividual nodes in the
+    zookeeper heirarchy, with the value of the node being the value of that key.
+    Each node for each dict key is a child of the "root" node, whose path is
+    specified with the ``path`` argument in the constructor.
     """
 
     def __init__(self, zk, path, *args, **kwargs):
+        """
+        Construct a new instance of a ``ZookeeperDict``.
+
+        :param zk: Zookeeper client, likely ``KazooClient``
+        :type zk: KazooClient
+        :param path: The path to the root config node.
+        :type path: string
+        :param autosync: Sync with Zookeeper before each read.
+        :type autosync: bool
+        """
         self.zk = zk
         self.path = path
         self.zk.ensure_path(self.path)
@@ -248,18 +272,43 @@ class ZookeeperDict(PersistedDict):
         super(ZookeeperDict, self).__init__(*args, **kwargs)
 
     def last_updated(self):
+        """
+        Ever-increasing integer, which is bumped any time a key in Zookeeper has
+        been changed (created, updated, deleted).
+
+        The value in incremented manually by an instances when updating the
+        dict, as well as when other instances of the dict update persistant
+        storage, via a Zookeeper watch on the root config node.
+        """
         return self._last_updated
 
     def persist(self, key, value):
+        """
+        Encode and save ``value`` at ``key``.
+
+        :param key: Key to store ``value`` at in Zookeeper.
+        :type key: string
+        :param value: Value to store. Encoded before being stored.
+        :type value: value
+        """
         encoded = self._encode(value)
         self.__set_or_create(key, encoded)
         self.__increment_last_updated()
 
     def depersist(self, key):
+        """
+        Remove ``key`` from dictionary.
+
+        :param key: Key to remove from Zookeeper.
+        :type key: string
+        """
         self.zk.delete(self.__path_of(key))
         self.__increment_last_updated()
 
     def persistents(self):
+        """
+        Dictionary of all keys and their values in Zookeeper.
+        """
         results = dict()
 
         for child in self.zk.get_children(self.path):
@@ -269,6 +318,17 @@ class ZookeeperDict(PersistedDict):
         return results
 
     def _pop(self, key, default=None):
+        """
+        If ``key`` is present in Zookeeper, removes it from Zookeeper and
+        returns the value.  If key is not in Zookeper and ``default`` argument
+        is provided, ``default`` is returned.  If ``default`` argument is not
+        provided, ``KeyError`` is raised.
+
+        :param key: Key to remove from Zookeeper
+        :type key: string
+        :param default: Default object to return if ``key`` is not present.
+        :type default: object
+        """
         path = self.__path_of(key)
 
         if self.zk.exists(path):
@@ -282,10 +342,19 @@ class ZookeeperDict(PersistedDict):
             raise KeyError
 
     def _setdefault(self, key, default=None):
-        pathed = self.__path_of(key)
+        """
+        If ``key`` is not present, set it as ``default`` and return it.  If
+        ``key`` is present, return its value.
 
-        if self.zk.exists(pathed):
-            value, _ = self.zk.get(pathed)
+        :param key: Key to add to Zookeeper
+        :type key: string
+        :param default: Default object to return if ``key`` is present.
+        :type default: object
+        """
+        path = self.__path_of(key)
+
+        if self.zk.exists(path):
+            value, _ = self.zk.get(path)
             return self._decode(value)
         else:
             self.persist(key, default)
@@ -298,14 +367,14 @@ class ZookeeperDict(PersistedDict):
         return '/'.join(parts)
 
     def __set_or_create(self, key, value):
-        pathed = self.__path_of(key)
+        path = self.__path_of(key)
 
-        if self.zk.exists(pathed):
+        if self.zk.exists(path):
             func = self.zk.set
         else:
             func = self.zk.create
 
-        return func(pathed, value)
+        return func(path, value)
 
     def __increment_last_updated(self, children=None):
         if self._last_updated is None:

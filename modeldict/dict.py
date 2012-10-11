@@ -1,5 +1,7 @@
 from modeldict.base import PersistedDict
 
+from kazoo.exceptions import NodeExistsError, NoNodeError
+
 
 class RedisDict(PersistedDict):
     """
@@ -416,15 +418,11 @@ class ZookeeperDict(PersistedDict):
         :type key: string
         :param default: Default object to return if ``key`` is present.
         :type default: object
-        """
-        path = self.__path_of(key)
 
-        if self.zk.exists(path):
-            value, _ = self.zk.get(path)
-            return self._decode(value)
-        else:
-            self.persist(key, default)
-            return default
+        Will retry trying to get or create a node based on the "retry" config
+        from the Kazoo client.
+        """
+        return self.zk.retry(self.__inner_set_default, key, default)
 
     def __path_of(self, key):
         parts = self.path.split('/')
@@ -442,3 +440,27 @@ class ZookeeperDict(PersistedDict):
             self._last_updated = 0
 
         self._last_updated += 1
+
+    def __inner_set_default(self, key, value):
+        """
+        Tries to return the value at key.  If the key does not exist, attempts
+        to create it with the value.  If the node is created in the mean time,
+        simply pass and return ``None``.
+        """
+        path = self.__path_of(key)
+
+        try:
+            # Try to get and return the existing node with its data
+            value, _ = self.zk.get(path)
+            return self._decode(value)
+        except NoNodeError:
+            # Node does not exist, we have to create it
+            try:
+                # Attempt to create the node
+                self.zk.create(path, self._encode(value))
+                return value
+            except NodeExistsError:
+                # Someone else already created it for us in the mean time, so
+                # nice!  So pass here and retry again so we'll get picked up
+                # by the first try block
+                pass

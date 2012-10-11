@@ -398,16 +398,31 @@ class ZookeeperDict(PersistedDict):
         :type default: object
         """
         path = self.__path_of(key)
+        value = None
 
-        if self.zk.exists(path):
-            value, _ = self.zk.get(path)
+        try:
+            # We need to both delete and return the value that was in ZK here.
+            raw_value, _ = self.zk.get(path)
+            value = self._decode(raw_value)
+        except NoNodeError:
+            # The node is already gone, so if a default is given, return it,
+            # otherwise, raise KeyError
+            if default:
+                return default
+            else:
+                raise KeyError
+
+        # Made it this far, it means have a value from the node and it existed
+        # at least by that point in time
+        try:
+            # Try to delete the node
             self.zk.delete(path)
             self.__increment_last_updated()
-            return self._decode(value)
-        elif default:
-            return default
-        else:
-            raise KeyError
+        except NoNodeError:
+            # Someone deleted the node in the mean time...how nice!
+            pass
+
+        return value
 
     def _setdefault(self, key, default=None):
         """
@@ -458,6 +473,7 @@ class ZookeeperDict(PersistedDict):
             try:
                 # Attempt to create the node
                 self.zk.create(path, self._encode(value))
+                self.__increment_last_updated()
                 return value
             except NodeExistsError:
                 # Someone else already created it for us in the mean time, so

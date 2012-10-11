@@ -434,13 +434,8 @@ class ZookeeperDict(PersistedDict):
 
     def __set_or_create(self, key, value):
         path = self.__path_of(key)
-
-        if self.zk.exists(path):
-            func = self.zk.set
-        else:
-            func = self.zk.create
-
-        return func(path, value)
+        self.zk.ensure_path(path)
+        self.zk.set(path, value)
 
     def __increment_last_updated(self, children=None):
         if self._last_updated is None:

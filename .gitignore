@@ -3,3 +3,4 @@
 *.egg
 build/
 dist/
+*.sublime-workspace

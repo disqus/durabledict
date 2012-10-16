@@ -4,11 +4,18 @@ import unittest
 import mock
 
 from redis import Redis
-from modeldict.dict import RedisDict, ModelDict, MemoryDict
+from modeldict.dict import RedisDict, ModelDict, MemoryDict, ZookeeperDict
 from tests.models import Setting
+
+from contextlib import contextmanager
 
 import django.core.management
 from django.core.cache.backends.locmem import LocMemCache
+
+from kazoo.testing.harness import KazooTestHarness
+
+import threading
+import thread
 
 
 class BaseTest(object):
@@ -31,7 +38,6 @@ class BaseTest(object):
     def test_acts_like_a_dictionary(self):
         self.dict['foo'] = 'bar'
         self.assertEquals(self.dict['foo'], 'bar')
-
         self.dict['foo2'] = 'bar2'
         self.assertEquals(self.dict['foo2'], 'bar2')
 
@@ -207,6 +213,86 @@ class ModelDictTest(object):
         return LocMemCache(self.keyspace, {})
 
 
+class ZookeeperDictTest(object):
+
+    namespace = '/modeldict/test'
+
+    def set_event_when_updated(self, client, value, event):
+        while client.last_updated() is not value:
+            pass
+
+        event.set()
+
+    def new_client(self):
+        client = self._get_client()
+        client.start()
+        return client
+
+    @contextmanager
+    def wait_for_update_of(self, zkdict, value):
+        event = threading.Event()
+        args = (zkdict, value, event)
+
+        thread.start_new_thread(self.set_event_when_updated, args)
+
+        event.wait(timeout=5)
+        actual = zkdict.last_updated()
+        format = 'Gave up waiting for last_updated value of %s, last saw %s'
+
+        self.assertEquals(actual, value, format % (actual, value))
+
+        yield
+
+    def test_other_cluster_in_namespace_does_not_effect_main_one(self):
+        other_dict = ZookeeperDict(self.new_client(), '/modeldict/other')
+
+        self.dict['foo'] = 'dict bar'
+        self.dict['dictkey'] = 'dict'
+
+        other_dict['foo'] = 'other'
+        other_dict['otherdictkey'] = 'otherv'
+
+        # This is "5" and not "3" because of a bug.  When a ZKDict object has
+        # __setattr__, it updates the last_updated value itself, PLUS the
+        # ZKDict's child watch sees that change and also updates the
+        # last_updated value as well.  This isn't ideal and will get changed.
+        with self.wait_for_update_of(other_dict, 5):
+            self.assertEquals(
+                self.dict,
+                dict(foo='dict bar', dictkey='dict')
+            )
+            self.assertEquals(
+                other_dict,
+                dict(foo='other', otherdictkey='otherv')
+            )
+
+    def test_changes_by_one_dict_are_reflected_in_another(self):
+        other_dict = ZookeeperDict(self.new_client(), self.namespace)
+
+        self.assertEquals(other_dict, {})
+
+        self.dict['foo'] = 'bar'
+        self.dict['baz'] = 'bub'
+
+        with self.wait_for_update_of(other_dict, 3):
+            self.assertEquals(other_dict['foo'], 'bar')
+            self.assertEquals(other_dict['baz'], 'bub')
+
+        self.dict['foo'] = 'changed'
+
+        with self.wait_for_update_of(other_dict, 4):
+            self.assertEquals(other_dict['foo'], 'changed')
+            self.assertEquals(other_dict['baz'], 'bub')
+
+    def test_raises_valueerror_for_keys_with_strings(self):
+        self.assertRaises(
+            ValueError,
+            self.dict.__setitem__,
+            'with/slash',
+            'value'
+        )
+
+
 class TestRedisDict(BaseTest, AutoSyncTrueTest, RedisTest, unittest.TestCase):
 
     def new_dict(self, keyspace=None):
@@ -288,6 +374,19 @@ class TestMemoryDict(BaseTest, AutoSyncTrueTest, unittest.TestCase):
         self.assertEquals(self.dict.values(), [obj])
 
 
+class TestZookeeperDict(BaseTest, ZookeeperDictTest, unittest.TestCase, KazooTestHarness):
+
+    def setUp(self):
+        self.setup_zookeeper()  # Makes self.client available as ZK client
+        super(TestZookeeperDict, self).setUp()
+
+    def tearDown(self):
+        self.teardown_zookeeper()
+
+    def new_dict(self):
+        return ZookeeperDict(self.client, self.namespace)
+
+
 class TestRedisDictManualSync(BaseTest, RedisTest, AutoSyncFalseTest, unittest.TestCase):
 
     def new_dict(self, keyspace=None):
@@ -298,3 +397,16 @@ class TestModelDictManualSync(BaseTest, ModelDictTest, AutoSyncFalseTest, unitte
 
     def new_dict(self):
         return ModelDict(Setting.objects, key_col='key', cache=self.cache, autosync=False)
+
+
+class TestZookeeperDictManualSync(BaseTest, ZookeeperDictTest, unittest.TestCase, KazooTestHarness):
+
+    def setUp(self):
+        self.setup_zookeeper()  # Makes self.client available as ZK client
+        super(TestZookeeperDictManualSync, self).setUp()
+
+    def tearDown(self):
+        self.teardown_zookeeper()
+
+    def new_dict(self):
+        return ZookeeperDict(self.client, self.namespace, autosync=False)

@@ -9,8 +9,9 @@ Usage
 
 Modeldict contains various flavors of a dictionary-like objects backed by a persistent data store.  All dicts classes are located in the ``modeldict.dict`` module.  At present, Modeldict offers the following dicts:
 
-1. ``modeldic.dict.RedisDict`` - Redis-backed persistent storage
-2. ``modeldic.dict.ModelDict`` - DB object (most likely Django model)-backed persistent storage.
+1. ``modeldict.dict.RedisDict`` - Backed by Redis.
+2. ``modeldict.dict.ModelDict`` - Backed by DB objects (most likely Django models).
+3. ``modeldict.dict.ZookeeperDict`` - Backed by Zookeeper.
 
 Each dictionary class has a different ``__init__`` method which take different arguments, so consult their documentation for specific usage detail.
 

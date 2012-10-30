@@ -4,7 +4,7 @@ import unittest
 import mock
 
 from redis import Redis
-from modeldict.dict import RedisDict, ModelDict, MemoryDict, ZookeeperDict
+from modeldict import RedisDict, ModelDict, MemoryDict, ZookeeperDict
 from tests.models import Setting
 
 from contextlib import contextmanager
@@ -29,7 +29,7 @@ class BaseTest(object):
         self.dict = self.new_dict()
 
     def mockmeth(self, method):
-        return "modeldict.dict.%s.%s" % (self.dict_class, method)
+        return "modeldict.%s.%s" % (self.dict_class, method)
 
     def assertDictAndPersistantsHave(self, **kwargs):
         self.assertEquals(self.dict, kwargs)

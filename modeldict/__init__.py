@@ -1,9 +1,4 @@
-__all__ = ('VERSION', 'ModelDict')
-
-try:
-    VERSION = __import__('pkg_resources') \
-        .get_distribution('django-modeldict').version
-except Exception, e:
-    VERSION = 'unknown'
-
-from modeldict.dict import ModelDict
+from redis import RedisDict
+from memory import MemoryDict
+from models import ModelDict
+from zookeeper import ZookeeperDict

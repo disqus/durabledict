@@ -7,17 +7,17 @@ Modeldict contains a collection of dictionary classes backed by a persistent dat
 Usage
 -----
 
-Modeldict contains various flavors of a dictionary-like objects backed by a persistent data store.  All dicts classes are located in the ``modeldict.dict`` module.  At present, Modeldict offers the following dicts:
+Modeldict contains various flavors of a dictionary-like objects backed by a persistent data store.  All dicts classes are located in the ``modeldict`` package.  At present, Modeldict offers the following dicts:
 
-1. ``modeldict.dict.RedisDict`` - Backed by Redis.
-2. ``modeldict.dict.ModelDict`` - Backed by DB objects (most likely Django models).
-3. ``modeldict.dict.ZookeeperDict`` - Backed by Zookeeper.
+1. ``modeldict.RedisDict`` - Backed by Redis.
+2. ``modeldict.ModelDict`` - Backed by DB objects (most likely Django models).
+3. ``modeldict.ZookeeperDict`` - Backed by Zookeeper.
 
 Each dictionary class has a different ``__init__`` method which take different arguments, so consult their documentation for specific usage detail.
 
 Once you have an instance of a modeldict, just use it like you would a normal dictionary::
 
-        from modeldict.dict import RedisDict
+        from modeldict import RedisDict
         from redis import Redis
 
         # Construct a new RedisDict object
@@ -45,7 +45,7 @@ Notes on Persistence, Consistency and the In-Memory Cache
 
 Nearly all methods called on a Modeldict dictionary class (i.e. ``RedisDict``) are proxied to an internal dict object that serves as a cache for access to dict values.  This cache is only updated with fresh values from persistent storage if there actually has been a change in the values stored in persistent storage.
 
-To check if the data in persistent storage has changed, each modeldict.dict backend is responsible for providing a fast ``last_updated()`` method that quickly tells the dict the last time any value in the persistent storage has been updated.  For instance, the ``ModelDict`` constructor requires a ``cache`` object passed in as an argument, which provides implementations of cache-line interface methods for maintaining the ``last_updated`` state.  A memcache client is a good candidate for this object.
+To check if the data in persistent storage has changed, each modeldict backend is responsible for providing a fast ``last_updated()`` method that quickly tells the dict the last time any value in the persistent storage has been updated.  For instance, the ``ModelDict`` constructor requires a ``cache`` object passed in as an argument, which provides implementations of cache-line interface methods for maintaining the ``last_updated`` state.  A memcache client is a good candidate for this object.
 
 Out of the box by default, all Modeldict classes will sync with their persistent data store on all writes (insert, updates and deletes) as well as immediately before any read operation on the dictionary.  This mode provides *high read consistency* of data at the expense of read speed.  You can be guaranteed that any read operation on your dict, i.e. ``settings['cool_feature']``, will always use the most up to date data.  If another consumer of your persistent data store has modified a value in that store since you instantiated your object, you will immediately be able to read the new data with your dict instance.
 
@@ -56,7 +56,7 @@ As mentioned above in, the downside to syncing with persistent storage before ea
 
 It therefore may be advantageous for you to *not* sync with persistent storage before every read from the dict and instead control that syncing manually.  To do so, pass ``autosync=False`` when you construct the dict, i.e.::
 
-        from modeldict.dict import RedisDict
+        from modeldict import RedisDict
         from redis import Redis
 
         # Construct a new RedisDict object that does not sync on reads
@@ -74,7 +74,7 @@ A good use case for manual syncing is a read-heavy web application, where you're
 Integration with Django
 ------------------------
 
-If you would like to store your dict values in the dadatabase for your Django application, you should use the ``modeldict.dict.modelDict`` class.  This class takes an instance of a model's manager, as well as ``key_col`` and ``value_col`` arguments which can be used to tell ``ModelDict`` which columns on your object it should use to store data.
+If you would like to store your dict values in the dadatabase for your Django application, you should use the ``modeldict.modelDict`` class.  This class takes an instance of a model's manager, as well as ``key_col`` and ``value_col`` arguments which can be used to tell ``ModelDict`` which columns on your object it should use to store data.
 
 It's also probably most adventageuous to construct your dicts with ``autosync=False`` (see "Manually Control Persistent Storage Sync" above) and manually call ``sync()`` before each request.  This can be acomlished most easily via the ``request_started`` signal::
 

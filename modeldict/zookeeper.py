@@ -1,6 +1,5 @@
 from modeldict.base import PersistedDict
 
-from kazoo.exceptions import NoNodeError
 from functools import wraps
 import posixpath
 
@@ -131,6 +130,11 @@ class ZookeeperDict(PersistedDict):
 
         super(ZookeeperDict, self).__init__(*args, **kwargs)
 
+    @property
+    def no_node_error(self):
+        from kazoo.exceptions import NoNodeError
+        return NoNodeError
+
     def last_updated(self):
         """
         Ever-increasing integer, which is bumped any time a key in Zookeeper has
@@ -202,7 +206,7 @@ class ZookeeperDict(PersistedDict):
             # We need to both delete and return the value that was in ZK here.
             raw_value, _ = self.zk.get(path)
             value = self._decode(raw_value)
-        except NoNodeError:
+        except self.no_node_error:
             # The node is already gone, so if a default is given, return it,
             # otherwise, raise KeyError
             if default:
@@ -216,7 +220,7 @@ class ZookeeperDict(PersistedDict):
             # Try to delete the node
             self.zk.delete(path)
             self.__increment_last_updated()
-        except NoNodeError:
+        except self.no_node_error:
             # Someone deleted the node in the mean time...how nice!
             pass
 
@@ -264,7 +268,7 @@ class ZookeeperDict(PersistedDict):
             # Try to get and return the existing node with its data
             value, _ = self.zk.get(path)
             return self._decode(value)
-        except NoNodeError:
+        except self.no_node_error:
             # Node does not exist, we have to create it
             self.zk.create(path, self._encode(value))
             self.__increment_last_updated()

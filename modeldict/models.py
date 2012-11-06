@@ -63,11 +63,11 @@ class ModelDict(PersistedDict):
             setattr(instance, self.value_col, self._encode(val))
             instance.save()
 
-        self.__touch_last_updated()
+        self.touch_last_updated()
 
     def depersist(self, key):
         self.manager.get(**{self.key_col: key}).delete()
-        self.__touch_last_updated()
+        self.touch_last_updated()
 
     def persistents(self):
         if self.return_instances:
@@ -83,7 +83,7 @@ class ModelDict(PersistedDict):
         instance, created = self.get_or_create(key, default)
 
         if created:
-            self.__touch_last_updated()
+            self.touch_last_updated()
 
         return self._decode(getattr(instance, self.value_col))
 
@@ -92,7 +92,7 @@ class ModelDict(PersistedDict):
             instance = self.manager.get(**{self.key_col: key})
             value = self._decode(getattr(instance, self.value_col))
             instance.delete()
-            self.__touch_last_updated()
+            self.touch_last_updated()
             return value
         except self.manager.model.DoesNotExist:
             if default is not None:
@@ -109,5 +109,5 @@ class ModelDict(PersistedDict):
     def last_updated(self):
         return self.cache.get(self.cache_key)
 
-    def __touch_last_updated(self):
+    def touch_last_updated(self):
         self.cache.incr('last_updated')

@@ -368,6 +368,11 @@ class TestModelDict(BaseTest, AutoSyncTrueTest, ModelDictTest, unittest.TestCase
         self.dict.return_instances = True
         self.assertEquals(self.dict['foo'], Setting.objects.get(key='foo'))
 
+    def test_touch_last_updated_inc_cache(self):
+        self.dict.cache = mock.Mock()
+        self.dict.touch_last_updated()
+        self.dict.cache.incr.assert_called_once_with(self.dict.cache_key)
+
 
 class TestMemoryDict(BaseTest, AutoSyncTrueTest, unittest.TestCase):
 

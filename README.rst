@@ -9,9 +9,9 @@ Usage
 
 Modeldict contains various flavors of a dictionary-like objects backed by a persistent data store.  All dicts classes are located in the ``modeldict`` package.  At present, Modeldict offers the following dicts:
 
-1. ``modeldict.RedisDict`` - Backed by Redis.
-2. ``modeldict.ModelDict`` - Backed by DB objects (most likely Django models).
-3. ``modeldict.ZookeeperDict`` - Backed by Zookeeper.
+1. ``modeldict.redis.RedisDict`` - Backed by Redis.
+2. ``modeldict.models.ModelDict`` - Backed by DB objects (most likely Django models).
+3. ``modeldict.zookeeper.ZookeeperDict`` - Backed by Zookeeper.
 
 Each dictionary class has a different ``__init__`` method which take different arguments, so consult their documentation for specific usage detail.
 
@@ -74,7 +74,7 @@ A good use case for manual syncing is a read-heavy web application, where you're
 Integration with Django
 ------------------------
 
-If you would like to store your dict values in the dadatabase for your Django application, you should use the ``modeldict.modelDict`` class.  This class takes an instance of a model's manager, as well as ``key_col`` and ``value_col`` arguments which can be used to tell ``ModelDict`` which columns on your object it should use to store data.
+If you would like to store your dict values in the dadatabase for your Django application, you should use the ``modeldict.models.modelDict`` class.  This class takes an instance of a model's manager, as well as ``key_col`` and ``value_col`` arguments which can be used to tell ``ModelDict`` which columns on your object it should use to store data.
 
 It's also probably most adventageuous to construct your dicts with ``autosync=False`` (see "Manually Control Persistent Storage Sync" above) and manually call ``sync()`` before each request.  This can be acomlished most easily via the ``request_started`` signal::
 

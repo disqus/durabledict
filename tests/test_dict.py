@@ -335,11 +335,11 @@ class TestModelDict(BaseTest, AutoSyncTrueTest, ModelDictTest, unittest.TestCase
 
     def test_persist_saves_model(self):
         self.dict.persist('foo', 'bar')
-        self.assertTrue(Setting.objects.get(key='foo'), 'bar')
+        self.assertEquals(self.dict['foo'], 'bar')
 
     def test_depersist_removes_model(self):
         self.dict.persist('foo', 'bar')
-        self.assertTrue(Setting.objects.get(key='foo'), 'bar')
+        self.assertTrue(self.dict['foo'], 'bar')
         self.dict.depersist('foo')
         self.assertRaises(Setting.DoesNotExist, Setting.objects.get, key='foo')
 

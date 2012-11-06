@@ -333,6 +333,13 @@ class TestModelDict(BaseTest, AutoSyncTrueTest, ModelDictTest, unittest.TestCase
     def new_dict(self):
         return ModelDict(Setting.objects, key_col='key', cache=self.cache)
 
+    def test_can_be_constructed_with_return_instances(self):
+        instance = ModelDict(Setting.objects, self.cache, return_instances='ri')
+        self.assertEquals(
+            instance.return_instances,
+            'ri'
+        )
+
     def test_persist_saves_model(self):
         self.dict.persist('foo', 'bar')
         self.assertEquals(self.dict['foo'], 'bar')
@@ -360,6 +367,11 @@ class TestModelDict(BaseTest, AutoSyncTrueTest, ModelDictTest, unittest.TestCase
 
     def test_changes_to_last_updated_are_atomic(self):
         pass
+
+    def test_instances_true_returns_the_whole_object_at_they_key(self):
+        self.dict.persist('foo', 'bar')
+        self.dict.return_instances = True
+        self.assertEquals(self.dict['foo'], Setting.objects.get(key='foo'))
 
 
 class TestMemoryDict(BaseTest, AutoSyncTrueTest, unittest.TestCase):

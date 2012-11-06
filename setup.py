@@ -16,7 +16,7 @@ if 'nosetests' in sys.argv[1:]:
 
 setup(
     name='modeldict',
-    version='0.3.1',
+    version='0.4.0',
     author='DISQUS',
     author_email='opensource@disqus.com',
     url='http://github.com/disqus/modeldict/',

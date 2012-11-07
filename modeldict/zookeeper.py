@@ -29,7 +29,7 @@ class ZookeeperDict(PersistedDict):
     called to its ``last_updated`` method (to check if the storage has been
     updated since the dict was last synced) simply returns a cached value -- it
     does not query Zookeeper or anything like that, so it's basically free.
-    This means that you can run this dictionary with ``autosync=False`` and it
+    This means that you can run this dictionary with ``autosync=True`` and it
     will still be reasonably performant.
 
     Dictionary keys in a ``ZookeeperDict`` are stored at inividual nodes in the

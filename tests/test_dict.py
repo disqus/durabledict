@@ -86,6 +86,11 @@ class BaseTest(object):
             del self.dict['foo']
             dp.assert_called_with('foo')
 
+    def test_uses_existing_persistents_on_initialize(self):
+        with mock.patch(self.mockmeth('persistents')) as p:
+            p.return_value = dict(a=1, b=2, c=3)
+            self.assertEquals(self.new_dict(), dict(a=1, b=2, c=3))
+
     def test_last_updated_setup_on_intialize(self):
         self.assertTrue(self.dict.last_updated())
 

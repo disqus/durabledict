@@ -14,7 +14,7 @@ class PersistedDict(object):
         self.__dict = dict()
         self.last_synced = 0
         self.autosync = autosync
-        # self.__sync_with_persistent_storage(force=True)
+        self.__sync_with_persistent_storage(force=True)
 
     @property
     def cache_expired(self):

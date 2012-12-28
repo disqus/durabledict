@@ -1,23 +1,23 @@
 ----------------
-Modeldict
+Durabledict
 ----------------
 
-Modeldict contains a collection of dictionary classes backed by a persistent data store (Redis, Django models, etc) suitable for use in a distributed manner.  Dictionary values are cached locally in the instance of the dictionary, and only sync with their values with their persistent data stores when a value in the data store has changed.
+Durabledict contains a collection of dictionary classes backed by a persistent data store (Redis, Django models, etc) suitable for use in a distributed manner.  Dictionary values are cached locally in the instance of the dictionary, and only sync with their values with their persistent data stores when a value in the data store has changed.
 
 Usage
 -----
 
-Modeldict contains various flavors of a dictionary-like objects backed by a persistent data store.  All dicts classes are located in the ``modeldict`` package.  At present, Modeldict offers the following dicts:
+Durabledict contains various flavors of a dictionary-like objects backed by a persistent data store.  All dicts classes are located in the ``durabledict`` package.  At present, Durabledict offers the following dicts:
 
-1. ``modeldict.redis.RedisDict`` - Backed by Redis.
-2. ``modeldict.models.ModelDict`` - Backed by DB objects (most likely Django models).
-3. ``modeldict.zookeeper.ZookeeperDict`` - Backed by Zookeeper.
+1. ``durabledict.redis.RedisDict`` - Backed by Redis.
+2. ``durabledict.models.Durabledict`` - Backed by DB objects (most likely Django models).
+3. ``durabledict.zookeeper.ZookeeperDict`` - Backed by Zookeeper.
 
 Each dictionary class has a different ``__init__`` method which take different arguments, so consult their documentation for specific usage detail.
 
-Once you have an instance of a modeldict, just use it like you would a normal dictionary::
+Once you have an instance of a durabledict, just use it like you would a normal dictionary::
 
-        from modeldict import RedisDict
+        from durabledict import RedisDict
         from redis import Redis
 
         # Construct a new RedisDict object
@@ -43,11 +43,11 @@ All dict types pickle their objects inside their persistent data store, so any o
 Notes on Persistence, Consistency and the In-Memory Cache
 -----------------------------
 
-Nearly all methods called on a Modeldict dictionary class (i.e. ``RedisDict``) are proxied to an internal dict object that serves as a cache for access to dict values.  This cache is only updated with fresh values from persistent storage if there actually has been a change in the values stored in persistent storage.
+Nearly all methods called on a Durabledict dictionary class (i.e. ``RedisDict``) are proxied to an internal dict object that serves as a cache for access to dict values.  This cache is only updated with fresh values from persistent storage if there actually has been a change in the values stored in persistent storage.
 
-To check if the data in persistent storage has changed, each modeldict backend is responsible for providing a fast ``last_updated()`` method that quickly tells the dict the last time any value in the persistent storage has been updated.  For instance, the ``ModelDict`` constructor requires a ``cache`` object passed in as an argument, which provides implementations of cache-line interface methods for maintaining the ``last_updated`` state.  A memcache client is a good candidate for this object.
+To check if the data in persistent storage has changed, each durabledict backend is responsible for providing a fast ``last_updated()`` method that quickly tells the dict the last time any value in the persistent storage has been updated.  For instance, the ``Durabledict`` constructor requires a ``cache`` object passed in as an argument, which provides implementations of cache-line interface methods for maintaining the ``last_updated`` state.  A memcache client is a good candidate for this object.
 
-Out of the box by default, all Modeldict classes will sync with their persistent data store on all writes (insert, updates and deletes) as well as immediately before any read operation on the dictionary.  This mode provides *high read consistency* of data at the expense of read speed.  You can be guaranteed that any read operation on your dict, i.e. ``settings['cool_feature']``, will always use the most up to date data.  If another consumer of your persistent data store has modified a value in that store since you instantiated your object, you will immediately be able to read the new data with your dict instance.
+Out of the box by default, all Durabledict classes will sync with their persistent data store on all writes (insert, updates and deletes) as well as immediately before any read operation on the dictionary.  This mode provides *high read consistency* of data at the expense of read speed.  You can be guaranteed that any read operation on your dict, i.e. ``settings['cool_feature']``, will always use the most up to date data.  If another consumer of your persistent data store has modified a value in that store since you instantiated your object, you will immediately be able to read the new data with your dict instance.
 
 Manually Control Persistent Storage Sync
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -56,7 +56,7 @@ As mentioned above in, the downside to syncing with persistent storage before ea
 
 It therefore may be advantageous for you to *not* sync with persistent storage before every read from the dict and instead control that syncing manually.  To do so, pass ``autosync=False`` when you construct the dict, i.e.::
 
-        from modeldict import RedisDict
+        from durabledict import RedisDict
         from redis import Redis
 
         # Construct a new RedisDict object that does not sync on reads
@@ -69,12 +69,12 @@ This causes the dictionary behave in the following way:
 3. Any time a dictionary is read from, *only data current in the internal cache is used*.  The dict *will not attempt to sync with its persistent data store* before reads.
 4. To force the dict to attempt to sync with its persistent data store, you may call the ``sync()`` method on the dictionary.  As with when ``autosync`` is false, if ``last_update`` says there are no changes, the dict will skip updating from persistent storage.
 
-A good use case for manual syncing is a read-heavy web application, where you're using a modeldict for settings configuration.  Very few requests actually *change* the dictionary contents - most simply read from the dictionary.  In this situation, you would perhaps only ``sync()`` at the beginning of a user's web request to make sure the dict is up to date, but then not during the request in order to push the response to the user as fast as possible.
+A good use case for manual syncing is a read-heavy web application, where you're using a durabledict for settings configuration.  Very few requests actually *change* the dictionary contents - most simply read from the dictionary.  In this situation, you would perhaps only ``sync()`` at the beginning of a user's web request to make sure the dict is up to date, but then not during the request in order to push the response to the user as fast as possible.
 
 Integration with Django
 ------------------------
 
-If you would like to store your dict values in the dadatabase for your Django application, you should use the ``modeldict.models.modelDict`` class.  This class takes an instance of a model's manager, as well as ``key_col`` and ``value_col`` arguments which can be used to tell ``ModelDict`` which columns on your object it should use to store data.
+If you would like to store your dict values in the dadatabase for your Django application, you should use the ``durabledict.models.Durabledict`` class.  This class takes an instance of a model's manager, as well as ``key_col`` and ``value_col`` arguments which can be used to tell ``Durabledict`` which columns on your object it should use to store data.
 
 It's also probably most adventageuous to construct your dicts with ``autosync=False`` (see "Manually Control Persistent Storage Sync" above) and manually call ``sync()`` before each request.  This can be acomlished most easily via the ``request_started`` signal::
 
@@ -83,14 +83,14 @@ It's also probably most adventageuous to construct your dicts with ``autosync=Fa
 Creating Your Own Persistent Dict
 ---------------------------------
 
-Creating your own persistent dict is easy.  All you need to do is subclass ``modeldict.base.PersistedDict`` and implement the following required interface methods.
+Creating your own persistent dict is easy.  All you need to do is subclass ``durabledict.base.PersistedDict`` and implement the following required interface methods.
 
 1. ``persist(key, value)`` - Persist ``value`` at ``key`` to your data store.
 2. ``depersist(key)`` - Delete the value at ``key`` from your data store.
 3. ``persistents()`` - Return a ``key=val`` dict of all keys in your data store.
 4. ``last_updated()`` - A comparable value of when the data in your data store was last updated.
 
-You may also implement a couple optional dictionary methods, which ``modeldict.base.PersistedDict`` will call when the actual non-underscored version is called on the dict.
+You may also implement a couple optional dictionary methods, which ``durabledict.base.PersistedDict`` will call when the actual non-underscored version is called on the dict.
 
 1. ``_pop(key[,default])`` - If ``key`` is in the dictionary, remove it and return its value, else return ``default``. If ``default`` is not given and ``key`` is not in the dictionary, a ``KeyError`` is raised.
 2. ``_setdefault(key[,default])`` - If key is in the dictionary, return its value. If not, insert key with a value of ``default`` and return ``default``. ``default`` defaults to ``None``.

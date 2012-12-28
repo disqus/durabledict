@@ -4,7 +4,7 @@ import unittest
 import mock
 
 from redis import Redis
-from modeldict import RedisDict, ModelDict, MemoryDict, ZookeeperDict
+from durabledict import RedisDict, Durabledict, MemoryDict, ZookeeperDict
 from tests.models import Setting
 
 from contextlib import contextmanager
@@ -29,7 +29,7 @@ class BaseTest(object):
         self.dict = self.new_dict()
 
     def mockmeth(self, method):
-        return "modeldict.%s.%s" % (self.dict_class, method)
+        return "durabledict.%s.%s" % (self.dict_class, method)
 
     def assertDictAndPersistantsHave(self, **kwargs):
         self.assertEquals(self.dict, kwargs)
@@ -197,16 +197,16 @@ class RedisTest(object):
         self.assertNotEquals(self.dict.last_updated(), new_dict.last_updated())
 
 
-class ModelDictTest(object):
+class DurabledictTest(object):
 
     def tearDown(self):
         django.core.management.call_command('flush', interactive=False)
         self.dict.cache.clear()
-        super(ModelDictTest, self).tearDown()
+        super(DurabledictTest, self).tearDown()
 
     def setUp(self):
         django.core.management.call_command('syncdb')
-        super(ModelDictTest, self).setUp()
+        super(DurabledictTest, self).setUp()
 
     @property
     def cache(self):
@@ -215,7 +215,7 @@ class ModelDictTest(object):
 
 class ZookeeperDictTest(object):
 
-    namespace = '/modeldict/test'
+    namespace = '/durabledict/test'
 
     def set_event_when_updated(self, client, value, event):
         while client.last_updated() is not value:
@@ -244,7 +244,7 @@ class ZookeeperDictTest(object):
         yield
 
     def test_other_cluster_in_namespace_does_not_effect_main_one(self):
-        other_dict = ZookeeperDict(self.new_client(), '/modeldict/other')
+        other_dict = ZookeeperDict(self.new_client(), '/durabledict/other')
 
         self.dict['foo'] = 'dict bar'
         self.dict['dictkey'] = 'dict'
@@ -328,13 +328,13 @@ class TestRedisDict(BaseTest, AutoSyncTrueTest, RedisTest, unittest.TestCase):
             self.assertFalse(self.hget('foo'))
 
 
-class TestModelDict(BaseTest, AutoSyncTrueTest, ModelDictTest, unittest.TestCase):
+class TestDurabledict(BaseTest, AutoSyncTrueTest, DurabledictTest, unittest.TestCase):
 
     def new_dict(self):
-        return ModelDict(Setting.objects, key_col='key', cache=self.cache)
+        return Durabledict(Setting.objects, key_col='key', cache=self.cache)
 
     def test_can_be_constructed_with_return_instances(self):
-        instance = ModelDict(Setting.objects, self.cache, return_instances='ri')
+        instance = Durabledict(Setting.objects, self.cache, return_instances='ri')
         self.assertEquals(
             instance.return_instances,
             'ri'
@@ -410,10 +410,10 @@ class TestRedisDictManualSync(BaseTest, RedisTest, AutoSyncFalseTest, unittest.T
         return RedisDict(keyspace or self.keyspace, Redis(), autosync=False)
 
 
-class TestModelDictManualSync(BaseTest, ModelDictTest, AutoSyncFalseTest, unittest.TestCase):
+class TestDurabledictManualSync(BaseTest, DurabledictTest, AutoSyncFalseTest, unittest.TestCase):
 
     def new_dict(self):
-        return ModelDict(Setting.objects, key_col='key', cache=self.cache, autosync=False)
+        return Durabledict(Setting.objects, key_col='key', cache=self.cache, autosync=False)
 
 
 class TestZookeeperDictManualSync(BaseTest, ZookeeperDictTest, unittest.TestCase, KazooTestHarness):

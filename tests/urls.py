@@ -6,5 +6,5 @@ def dummy_view(request):
     return HttpResponse()
 
 urlpatterns = patterns('',
-    url(r'^$', dummy_view, name='modeldict-home'),
+    url(r'^$', dummy_view, name='durabledict-home'),
 )

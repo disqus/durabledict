@@ -1,5 +1,5 @@
 {
-  "project_id": "modeldict",
+  "project_id": "durabledict",
   "conduit_uri" : "http://phabricator.local.disqus.net/",
   "arcanist_configuration": "DisqusConfiguration",
   "copyright_holder": "Disqus, Inc.",

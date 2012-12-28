@@ -1,4 +1,4 @@
-from modeldict.base import PersistedDict
+from durabledict.base import PersistedDict
 
 from functools import wraps
 import posixpath
@@ -37,7 +37,7 @@ class ZookeeperDict(PersistedDict):
     Each node for each dict key is a child of the "root" node, whose path is
     specified with the ``path`` argument in the constructor.
 
-        >>> from modeldict.dict import ZookeeperDict
+        >>> from durabledict.dict import ZookeeperDict
         >>> from kazoo.client import KazooClient
         >>> kazoo = KazooClient()
         >>> kazoo.start()
@@ -53,11 +53,11 @@ class ZookeeperDict(PersistedDict):
         >>> zkdict['exchange_rate']
         Traceback (most recent call last):
           File "<stdin>", line 1, in <module>
-          File "modeldict/base.py", line 53, in __getitem__
+          File "durabledict/base.py", line 53, in __getitem__
             return self.__dict.__getitem__(key)
         KeyError: 'exchange_rate'
 
-    NOTE: unlike ``RedisDict`` or ``ModelDict``, which are backed by hightly
+    NOTE: unlike ``RedisDict`` or ``Durabledict``, which are backed by hightly
     consistent backend storages, ``ZookeeperDict`` is backed with Zookeeper,
     which has looser consistency guarantees.
 

@@ -15,11 +15,11 @@ if 'nosetests' in sys.argv[1:]:
     setup_requires.append('nose')
 
 setup(
-    name='modeldict',
+    name='durabledict',
     version='0.5.0',
     author='DISQUS',
     author_email='opensource@disqus.com',
-    url='http://github.com/disqus/modeldict/',
+    url='http://github.com/disqus/durabledict/',
     description = 'Dictionary-style access to different types of models.',
     packages=find_packages(),
     zip_safe=False,

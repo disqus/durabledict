@@ -1,4 +1,4 @@
-from modeldict.base import PersistedDict
+from durabledict.base import PersistedDict
 
 
 class MemoryDict(PersistedDict):

@@ -1,7 +1,7 @@
-from base import PersistedDict
+from base import DurableDict
 
 
-class RedisDict(PersistedDict):
+class RedisDict(DurableDict):
     """
     Dictionary-style access to a redis hash table. Populates a cache and a local
     in-memory to avoid multiple hits to the database.
@@ -25,7 +25,7 @@ class RedisDict(PersistedDict):
     def depersist(self, key):
         self.__touch_and_multi(('hdel', (self.keyspace, key)))
 
-    def persistents(self):
+    def durables(self):
         encoded = self.conn.hgetall(self.keyspace)
         tuples = [(k, self._decode(v)) for k, v in encoded.items()]
         return dict(tuples)

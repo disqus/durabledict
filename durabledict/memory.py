@@ -1,7 +1,7 @@
-from durabledict.base import PersistedDict
+from durabledict.base import DurableDict
 
 
-class MemoryDict(PersistedDict):
+class MemoryDict(DurableDict):
     '''
     Does not actually persist any data to a persistant storage.  Instead, keeps
     everything in memory.  This is really only useful for use in tests
@@ -20,7 +20,7 @@ class MemoryDict(PersistedDict):
         del self.__storage[key]
         self.__last_updated += 1
 
-    def persistents(self):
+    def durables(self):
         encoded_tuples = self.__storage.items()
         tuples = [(k, self._decode(v)) for k, v in encoded_tuples]
         return dict(tuples)

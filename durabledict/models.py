@@ -1,7 +1,7 @@
-from base import PersistedDict
+from base import DurableDict
 
 
-class Durabledict(PersistedDict):
+class Durabledict(DurableDict):
     """
     Dictionary-style access to a model. Populates a cache and a local in-memory
     to avoid multiple hits to the database.
@@ -69,7 +69,7 @@ class Durabledict(PersistedDict):
         self.manager.get(**{self.key_col: key}).delete()
         self.touch_last_updated()
 
-    def persistents(self):
+    def durables(self):
         if self.return_instances:
             return dict((i.key, i) for i in self.manager.all())
         else:

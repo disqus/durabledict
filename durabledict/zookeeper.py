@@ -1,4 +1,4 @@
-from durabledict.base import PersistedDict
+from durabledict.base import DurableDict
 
 from functools import wraps
 import posixpath
@@ -19,7 +19,7 @@ def validate_key(func):
     return wrapper
 
 
-class ZookeeperDict(PersistedDict):
+class ZookeeperDict(DurableDict):
     """
     Dictionary backed by Zookeeper.  Functions just as you would expect a normal
     dictiony to function, except the values in the dictionary are persisted and
@@ -120,7 +120,7 @@ class ZookeeperDict(PersistedDict):
         self.zk.ensure_path(self.path)
         self._last_updated = None
 
-        # TODO: The base PersistedDict class updates last_updated itself
+        # TODO: The base DurableDict class updates last_updated itself
         # manually when adding a new key with __setattr__, as well as this watch
         # also incrementing the value.
         self.child_watch = self.zk.ChildrenWatch(
@@ -171,7 +171,7 @@ class ZookeeperDict(PersistedDict):
         self.zk.delete(self.__path_of(key))
         self.__increment_last_updated()
 
-    def persistents(self):
+    def durables(self):
         """
         Dictionary of all keys and their values in Zookeeper.
         """

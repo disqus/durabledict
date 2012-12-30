@@ -33,7 +33,7 @@ class BaseTest(object):
 
     def assertDictAndPersistantsHave(self, **kwargs):
         self.assertEquals(self.dict, kwargs)
-        self.assertEquals(self.dict.persistents(), kwargs)
+        self.assertEquals(self.dict.durables(), kwargs)
 
     def test_acts_like_a_dictionary(self):
         self.dict['foo'] = 'bar'
@@ -63,7 +63,7 @@ class BaseTest(object):
         self.dict['foo'] = complex_vars
 
         self.assertEquals(complex_vars, self.dict['foo'])
-        self.assertEquals(dict(foo=complex_vars), self.dict.persistents())
+        self.assertEquals(dict(foo=complex_vars), self.dict.durables())
 
         self.assertEquals(self.dict.setdefault('foo', complex_vars), complex_vars)
         self.assertEquals(self.dict.setdefault('bazzle', 'fuzzle'), 'fuzzle')
@@ -86,8 +86,8 @@ class BaseTest(object):
             del self.dict['foo']
             dp.assert_called_with('foo')
 
-    def test_uses_existing_persistents_on_initialize(self):
-        with mock.patch(self.mockmeth('persistents')) as p:
+    def test_uses_existing_durables_on_initialize(self):
+        with mock.patch(self.mockmeth('durables')) as p:
             p.return_value = dict(a=1, b=2, c=3)
             self.assertEquals(self.new_dict(), dict(a=1, b=2, c=3))
 
@@ -146,25 +146,25 @@ class AutoSyncTrueTest(object):
         self.dict['foo'] = 'bar'
 
         with mock.patch(self.mockmeth('last_updated')) as last_updated:
-            # Make it like the persistents have never been updated
+            # Make it like the durables have never been updated
             last_updated.return_value = 0
 
-            with mock.patch(self.mockmeth('persistents')) as persistents:
-                # But the persistents have been updated to a new value
-                persistents.return_value = dict(updated='persistents')
+            with mock.patch(self.mockmeth('durables')) as durables:
+                # But the durables have been updated to a new value
+                durables.return_value = dict(updated='durables')
                 self.assertEquals(self.dict, dict(foo='bar'))
 
                 # Change the last updated to a high number to expire the cache,
                 # then fetch a new value by calling len() on the dict
                 last_updated.return_value = 8000000000
                 len(self.dict)
-                self.assertEquals(self.dict, dict(updated='persistents'))
+                self.assertEquals(self.dict, dict(updated='durables'))
 
 
 class AutoSyncFalseTest(object):
 
-    def test_does_not_update_from_persistents_on_read(self):
-        # Add a key to the dict, which will sync with persistents
+    def test_does_not_update_from_durables_on_read(self):
+        # Add a key to the dict, which will sync with durables
         self.assertEquals(self.dict, dict())
         self.dict['foo'] = 'bar'
 
@@ -309,13 +309,13 @@ class TestRedisDict(BaseTest, AutoSyncTrueTest, RedisTest, unittest.TestCase):
         self.dict.depersist('foo')
         self.assertFalse(self.hget('foo'))
 
-    def test_persistents_returns_items_in_redis(self):
+    def test_durables_returns_items_in_redis(self):
         self.dict.persist('foo', 'bar')
         self.dict.persist('baz', 'bang')
 
         new_dict = self.new_dict()
 
-        self.assertEquals(new_dict.persistents(), dict(foo='bar', baz='bang'))
+        self.assertEquals(new_dict.durables(), dict(foo='bar', baz='bang'))
 
     def test_last_updated_set_to_1_on_initialize(self):
         self.assertEquals(self.dict.last_updated(), 1)
@@ -350,10 +350,10 @@ class TestDurabledict(BaseTest, AutoSyncTrueTest, DurabledictTest, unittest.Test
         self.dict.depersist('foo')
         self.assertRaises(Setting.DoesNotExist, Setting.objects.get, key='foo')
 
-    def test_persistents_returns_dict_of_models_in_db(self):
+    def test_durables_returns_dict_of_models_in_db(self):
         self.dict.persist('foo', 'bar')
         self.dict.persist('buzz', 'bang')
-        self.assertEquals(self.dict.persistents(), dict(foo='bar', buzz='bang'))
+        self.assertEquals(self.dict.durables(), dict(foo='bar', buzz='bang'))
 
     def test_last_updated_set_to_1_on_initialize(self):
         self.assertEquals(self.dict.last_updated(), 1)

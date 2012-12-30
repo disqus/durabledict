@@ -1,7 +1,7 @@
 from base import DurableDict
 
 
-class Durabledict(DurableDict):
+class ModelDict(DurableDict):
     """
     Dictionary-style access to a model. Populates a cache and a local in-memory
     to avoid multiple hits to the database.
@@ -9,12 +9,12 @@ class Durabledict(DurableDict):
         # Given ``Model`` that has a primary key (``pk``) column that can be
         # strings:
 
-        mydict = Durabledict(Model.manager, value_col='foo')
+        mydict = ModelDict(Model.manager, value_col='foo')
         mydict['test']
         >>> 'bar' #doctest: +SKIP
 
-    The first positional argument to ``Durabledict`` is ``manager``, which is an
-    instance of a Manager which ``Durabledict`` uses to read and write to your
+    The first positional argument to ``ModelDict`` is ``manager``, which is an
+    instance of a Manager which ``ModelDict`` uses to read and write to your
     database.  Any object that conforms to the interface can work, but the
     expectation is that ``manager`` is a Django.model manager.
 
@@ -24,13 +24,13 @@ class Durabledict(DurableDict):
     create the key if it does not exist with the default value, and ``incr`` is
     done to atomically update the last_updated value.
 
-    By default, ``Durabledict`` will use the ``pk`` column of your model as the
+    By default, ``ModelDict`` will use the ``pk`` column of your model as the
     "key" for the dictionary.  If you want to use another key besides the
     ``Model``s ``pk``, you may specify that in the constructor with ``key_col``
     kwarg.  For instance, if your ``Model`` has a column called ``id``, you can
     index into that column by passing ``key_col='id'`` in to the contructor:
 
-        mydict = Durabledict(Model, key_col='id', value_col='foo')
+        mydict = ModelDict(Model, key_col='id', value_col='foo')
         mydict['test']
         >>> 'bar' #doctest: +SKIP
 
@@ -38,7 +38,7 @@ class Durabledict(DurableDict):
     column.  If you'd like to use another column pass the ``value_col`` kwarg to
     the constructor.
 
-    By default, ``Durabledict`` instances will return the decoded value present in
+    By default, ``ModelDict`` instances will return the decoded value present in
     the ``value_col``.  If, instead, you would like to return the entire model
     instance, you can instead pass ``True`` to the ``return_instances`` kwarg.
     """
@@ -54,7 +54,7 @@ class Durabledict(DurableDict):
 
         self.cache.add(self.cache_key, 1)  # Only adds if key does not exist
 
-        super(Durabledict, self).__init__(*args, **kwargs)
+        super(ModelDict, self).__init__(*args, **kwargs)
 
     def persist(self, key, val):
         instance, created = self.get_or_create(key, val)

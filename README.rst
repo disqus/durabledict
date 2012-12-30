@@ -10,7 +10,7 @@ Usage
 Durabledict contains various flavors of a dictionary-like objects backed by a durable data store.  All dicts classes are located in the ``durabledict`` package.  At present, Durabledict offers the following dicts:
 
 1. ``durabledict.redis.RedisDict`` - Backed by Redis.
-2. ``durabledict.models.Durabledict`` - Backed by DB objects (most likely Django models).
+2. ``durabledict.models.ModelDict`` - Backed by DB objects (most likely Django models).
 3. ``durabledict.zookeeper.ZookeeperDict`` - Backed by Zookeeper.
 
 Each dictionary class has a different ``__init__`` method which take different arguments, so consult their documentation for specific usage detail.

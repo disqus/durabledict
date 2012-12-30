@@ -4,7 +4,7 @@ import unittest
 import mock
 
 from redis import Redis
-from durabledict import RedisDict, Durabledict, MemoryDict, ZookeeperDict
+from durabledict import RedisDict, ModelDict, MemoryDict, ZookeeperDict
 from tests.models import Setting
 
 from contextlib import contextmanager
@@ -197,16 +197,16 @@ class RedisTest(object):
         self.assertNotEquals(self.dict.last_updated(), new_dict.last_updated())
 
 
-class DurabledictTest(object):
+class ModelDictTest(object):
 
     def tearDown(self):
         django.core.management.call_command('flush', interactive=False)
         self.dict.cache.clear()
-        super(DurabledictTest, self).tearDown()
+        super(ModelDictTest, self).tearDown()
 
     def setUp(self):
         django.core.management.call_command('syncdb')
-        super(DurabledictTest, self).setUp()
+        super(ModelDictTest, self).setUp()
 
     @property
     def cache(self):
@@ -328,13 +328,13 @@ class TestRedisDict(BaseTest, AutoSyncTrueTest, RedisTest, unittest.TestCase):
             self.assertFalse(self.hget('foo'))
 
 
-class TestDurabledict(BaseTest, AutoSyncTrueTest, DurabledictTest, unittest.TestCase):
+class TestModelDict(BaseTest, AutoSyncTrueTest, ModelDictTest, unittest.TestCase):
 
     def new_dict(self):
-        return Durabledict(Setting.objects, key_col='key', cache=self.cache)
+        return ModelDict(Setting.objects, key_col='key', cache=self.cache)
 
     def test_can_be_constructed_with_return_instances(self):
-        instance = Durabledict(Setting.objects, self.cache, return_instances='ri')
+        instance = ModelDict(Setting.objects, self.cache, return_instances='ri')
         self.assertEquals(
             instance.return_instances,
             'ri'
@@ -410,10 +410,10 @@ class TestRedisDictManualSync(BaseTest, RedisTest, AutoSyncFalseTest, unittest.T
         return RedisDict(keyspace or self.keyspace, Redis(), autosync=False)
 
 
-class TestDurabledictManualSync(BaseTest, DurabledictTest, AutoSyncFalseTest, unittest.TestCase):
+class TestModelDictManualSync(BaseTest, ModelDictTest, AutoSyncFalseTest, unittest.TestCase):
 
     def new_dict(self):
-        return Durabledict(Setting.objects, key_col='key', cache=self.cache, autosync=False)
+        return ModelDict(Setting.objects, key_col='key', cache=self.cache, autosync=False)
 
 
 class TestZookeeperDictManualSync(BaseTest, ZookeeperDictTest, unittest.TestCase, KazooTestHarness):

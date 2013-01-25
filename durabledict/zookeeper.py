@@ -117,6 +117,10 @@ class ZookeeperDict(DurableDict):
         """
         self.zk = zk
         self.path = path
+
+        if not self.zk.connected:
+            self.zk.start()
+
         self.zk.ensure_path(self.path)
         self._last_updated = None
 

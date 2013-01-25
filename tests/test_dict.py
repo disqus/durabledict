@@ -292,6 +292,17 @@ class ZookeeperDictTest(object):
             'value'
         )
 
+    def test_starts_the_zk_client_if_not_already_started(self):
+        client = mock.Mock(connected=False)
+
+        ZookeeperDict(client, self.namespace)
+        client.start.assert_called_once_with()
+
+        client.start.reset_mock()
+        client.connected = True
+        ZookeeperDict(client, self.namespace)
+        self.assertFalse(client.start.called)
+
 
 class TestRedisDict(BaseTest, AutoSyncTrueTest, RedisTest, unittest.TestCase):
 

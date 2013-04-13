@@ -16,7 +16,7 @@ if 'nosetests' in sys.argv[1:]:
 
 setup(
     name='durabledict',
-    version='0.7.0',
+    version='0.7.1',
     author='DISQUS',
     author_email='opensource@disqus.com',
     url='http://github.com/disqus/durabledict/',

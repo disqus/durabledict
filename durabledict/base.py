@@ -38,7 +38,7 @@ class DurableDict(object):
 
     def get(self, key, default=None):
         self.__sync_with_durable_storage()
-        return self.__dict.pop(key, default)
+        return self.__dict.get(key, default)
 
     def __setitem__(self, key, val):
         self.persist(key, val)

@@ -133,6 +133,11 @@ class BaseTest(object):
         self.assertEquals('default', self.dict.get('junk', 'default'))
         self.assertEquals(None, self.dict.get('junk'))
 
+    def test_get_does_not_remove_element(self):
+        self.dict['foo'] = 'bar'
+        self.assertEquals('bar', self.dict.get('foo'))
+        self.assertEquals('bar', self.dict.get('foo'))
+
     def test_contains_works(self):
         self.assertFalse('foo' in self.dict)
         self.dict['foo'] = 'bar'

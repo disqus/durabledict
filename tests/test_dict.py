@@ -381,9 +381,6 @@ class TestModelDict(BaseTest, AutoSyncTrueTest, ModelDictTest, unittest.TestCase
         self.dict.setdefault('foo', 'notset')
         self.assertEquals(before, self.dict.last_updated())
 
-    def test_changes_to_last_updated_are_atomic(self):
-        pass
-
     def test_instances_true_returns_the_whole_object_at_they_key(self):
         self.dict.persist('foo', 'bar')
         self.dict.return_instances = True
@@ -393,6 +390,20 @@ class TestModelDict(BaseTest, AutoSyncTrueTest, ModelDictTest, unittest.TestCase
         self.dict.cache = mock.Mock()
         self.dict.touch_last_updated()
         self.dict.cache.incr.assert_called_once_with(self.dict.cache_key)
+
+    def test_resets_last_update_if_value_is_deleted(self):
+        self.dict.persist('foo', 'bar')
+        self.assertEquals(self.dict['foo'], 'bar')
+
+        self.dict.cache.delete(self.dict.cache_key)
+
+        self.dict.persist('baz', 'fizzle')
+        self.assertEquals(self.dict['foo'], 'bar')
+        self.assertEquals(self.dict['baz'], 'fizzle')
+        self.assertEquals(
+            self.dict.cache.get(self.dict.cache_key),
+            self.dict.LAST_UPDATED_MISSING_INCREMENT + 2  # for 2 updates
+        )
 
 
 class TestMemoryDict(BaseTest, AutoSyncTrueTest, unittest.TestCase):

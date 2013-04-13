@@ -43,6 +43,11 @@ class ModelDict(DurableDict):
     instance, you can instead pass ``True`` to the ``return_instances`` kwarg.
     """
 
+    #: The value to increate last_updated by, in the event that the key is
+    # missing from the cache.  See the comment inside touch_last_updated for
+    # details.
+    LAST_UPDATED_MISSING_INCREMENT = 1000
+
     def __init__(self, manager, cache, *args, **kwargs):
         self.manager = manager
         self.cache = cache
@@ -110,4 +115,45 @@ class ModelDict(DurableDict):
         return self.cache.get(self.cache_key)
 
     def touch_last_updated(self):
-        self.cache.incr('last_updated')
+        try:
+            self.cache.incr(self.cache_key)
+        except ValueError:
+            # The last_updated cache key is missing. This may be because it has
+            # expired or been explicitly deleted. It is then necessary to
+            # recreate the value. by synthesizing an ``incr``. This is
+            # accomplished by adding the current ``self.last_synced`` value plus
+            # some increment, naively "1".
+            #
+            # However, there is a race condition. It is entirely possible that
+            # an instance of DurableDict which sees the key as missing may
+            # have an out of date value for ``self.last_synced`` - such as if
+            # multiple updates have occurred from other instances of DurableDict
+            # (and are reflected in the cache value of last_udated), but this
+            # instance of DurableDict has not seen those changes yet. If the
+            # cache key is deleted before this instance hasn't seen those
+            # changed, but this instance sees the cache as expired, then it will
+            # update the value to what it knows to be last_synced + 1, which is
+            # incorrect.
+            #
+            # A workaround to this problem is to set the new cache value to what
+            # this instance thinks last_synced is + some non-trivial number.
+            # This is not a perfect solution, as it's possible there could be
+            # LAST_UPDATED_MISSING_INCREMENT changes to the dict since this
+            # instance last checked, so LAST_UPDATED_MISSING_INCREMENT should
+            # be set to a value high enough to where that possibility is
+            # unlikely.
+            added_key = self.cache.add(
+                self.cache_key,
+                self.last_synced + self.LAST_UPDATED_MISSING_INCREMENT
+            )
+
+            # XXX There is still  race condition here. It is possible that the
+            # key can be deleted between the call to ``add`` and ``incr``, in
+            # which case the ``incr`` call will fail.  This is a unlikely
+            # scenario and as such is not handled.
+
+            # If the ``add`` did not succeed, it means that another instance of
+            # DurableDict beat this one to adding the cache value back and so
+            # this instance should do the ``incr`` like normal.
+            if not added_key:
+                self.cache.incr(self.cache_key)

@@ -121,13 +121,14 @@ class ZookeeperDict(DurableDict):
         if not self.zk.connected:
             self.zk.start()
 
-        self.zk.ensure_path(self.path)
+        self.zk.retry(self.zk.ensure_path, self.path)
         self._last_updated = None
 
         # TODO: The base DurableDict class updates last_updated itself
         # manually when adding a new key with __setattr__, as well as this watch
         # also incrementing the value.
-        self.child_watch = self.zk.ChildrenWatch(
+        self.child_watch = self.zk.retry(
+            self.zk.ChildrenWatch,
             self.path,
             self.__increment_last_updated
         )
@@ -172,7 +173,7 @@ class ZookeeperDict(DurableDict):
         :param key: Key to remove from Zookeeper.
         :type key: string
         """
-        self.zk.delete(self.__path_of(key))
+        self.zk.retry(self.zk.delete, self.__path_of(key))
         self.__increment_last_updated()
 
     def durables(self):
@@ -181,8 +182,9 @@ class ZookeeperDict(DurableDict):
         """
         results = dict()
 
-        for child in self.zk.get_children(self.path):
-            value, _ = self.zk.get(
+        for child in self.zk.retry(self.zk.get_children, self.path):
+            value, _ = self.zk.retry(
+                self.zk.get,
                 self.__path_of(child),
                 watch=self.__increment_last_updated
             )
@@ -208,7 +210,7 @@ class ZookeeperDict(DurableDict):
 
         try:
             # We need to both delete and return the value that was in ZK here.
-            raw_value, _ = self.zk.get(path)
+            raw_value, _ = self.zk.retry(self.zk.get, path)
             value = self._decode(raw_value)
         except self.no_node_error:
             # The node is already gone, so if a default is given, return it,
@@ -222,7 +224,7 @@ class ZookeeperDict(DurableDict):
         # at least by that point in time
         try:
             # Try to delete the node
-            self.zk.delete(path)
+            self.zk.retry(self.zk.delete, path)
             self.__increment_last_updated()
         except self.no_node_error:
             # Someone deleted the node in the mean time...how nice!
@@ -251,8 +253,8 @@ class ZookeeperDict(DurableDict):
 
     def __set_or_create(self, key, value):
         path = self.__path_of(key)
-        self.zk.ensure_path(path)
-        self.zk.set(path, value)
+        self.zk.retry(self.zk.ensure_path, path)
+        self.zk.retry(self.zk.set, path, value)
 
     def __increment_last_updated(self, children=None):
         if self._last_updated is None:
@@ -270,10 +272,10 @@ class ZookeeperDict(DurableDict):
 
         try:
             # Try to get and return the existing node with its data
-            value, _ = self.zk.get(path)
+            value, _ = self.zk.retry(self.zk.get, path)
             return self._decode(value)
         except self.no_node_error:
             # Node does not exist, we have to create it
-            self.zk.create(path, self._encode(value))
+            self.zk.retry(self.zk.create, path, self._encode(value))
             self.__increment_last_updated()
             return value

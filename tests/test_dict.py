@@ -12,7 +12,7 @@ from contextlib import contextmanager
 import django.core.management
 from django.core.cache.backends.locmem import LocMemCache
 
-from kazoo.testing.harness import KazooTestHarness
+from kazoo.testing.harness import KazooTestCase
 
 import threading
 import thread
@@ -25,6 +25,7 @@ class BaseTest(object):
         return self.dict.__class__.__name__
 
     def setUp(self):
+        super(BaseTest, self).setUp()
         self.keyspace = 'test'
         self.dict = self.new_dict()
 
@@ -418,14 +419,7 @@ class TestMemoryDict(BaseTest, AutoSyncTrueTest, unittest.TestCase):
         self.assertEquals(self.dict.values(), [obj])
 
 
-class TestZookeeperDict(BaseTest, ZookeeperDictTest, unittest.TestCase, KazooTestHarness):
-
-    def setUp(self):
-        self.setup_zookeeper()  # Makes self.client available as ZK client
-        super(TestZookeeperDict, self).setUp()
-
-    def tearDown(self):
-        self.teardown_zookeeper()
+class TestZookeeperDict(BaseTest, KazooTestCase, ZookeeperDictTest, unittest.TestCase):
 
     def new_dict(self):
         return ZookeeperDict(self.client, self.namespace)
@@ -443,14 +437,7 @@ class TestModelDictManualSync(BaseTest, ModelDictTest, AutoSyncFalseTest, unitte
         return ModelDict(Setting.objects, key_col='key', cache=self.cache, autosync=False)
 
 
-class TestZookeeperDictManualSync(BaseTest, ZookeeperDictTest, unittest.TestCase, KazooTestHarness):
-
-    def setUp(self):
-        self.setup_zookeeper()  # Makes self.client available as ZK client
-        super(TestZookeeperDictManualSync, self).setUp()
-
-    def tearDown(self):
-        self.teardown_zookeeper()
+class TestZookeeperDictManualSync(BaseTest, KazooTestCase, ZookeeperDictTest, unittest.TestCase, ):
 
     def new_dict(self):
         return ZookeeperDict(self.client, self.namespace, autosync=False)

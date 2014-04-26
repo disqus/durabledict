@@ -2,7 +2,7 @@
 import os
 import sys
 
-from setuptools import setup, find_packages
+from setuptools import setup
 
 ZOOKEEPER_PATHS = {
     'darwin': '/usr/local/Cellar/zookeeper/3.4.5/libexec/',  # assume homebrew
@@ -29,7 +29,7 @@ setup(
     author_email='opensource@disqus.com',
     url='http://github.com/disqus/durabledict/',
     description='Dictionary-style access to different types of models.',
-    packages=find_packages(),
+    packages=['durabledict'],
     zip_safe=False,
     setup_requires=[
         'nose'

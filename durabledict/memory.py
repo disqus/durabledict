@@ -1,4 +1,5 @@
 from durabledict.base import DurableDict
+from durabledict.encoding import NoOpEncoding
 
 
 class MemoryDict(DurableDict):
@@ -10,10 +11,14 @@ class MemoryDict(DurableDict):
     def __init__(self, *args, **kwargs):
         self.__storage = dict()
         self.__last_updated = 1
+
+        if 'encoding' not in kwargs:
+            kwargs['encoding'] = NoOpEncoding
+
         super(MemoryDict, self).__init__(*args, **kwargs)
 
     def persist(self, key, val):
-        self.__storage[key] = self._encode(val)
+        self.__storage[key] = self.encoding.encode(val)
         self.__last_updated += 1
 
     def depersist(self, key):
@@ -22,7 +27,7 @@ class MemoryDict(DurableDict):
 
     def durables(self):
         encoded_tuples = self.__storage.items()
-        tuples = [(k, self._decode(v)) for k, v in encoded_tuples]
+        tuples = [(k, self.encoding.decode(v)) for k, v in encoded_tuples]
         return dict(tuples)
 
     def last_updated(self):
@@ -30,24 +35,18 @@ class MemoryDict(DurableDict):
 
     def _setdefault(self, key, default=None):
         self.__last_updated += 1
-        val = self.__storage.setdefault(key, self._encode(default))
-        return self._decode(val)
+        val = self.__storage.setdefault(key, self.encoding.encode(default))
+        return self.encoding.decode(val)
 
     def _pop(self, key, default=None):
         self.__last_updated += 1
 
         if default:
-            default = self._encode(default)
+            default = self.encoding.encode(default)
 
         val = self.__storage.pop(key, default)
 
         if val is None:
             raise KeyError
 
-        return self._decode(val)
-
-    def _encode(self, value):
-        return value
-
-    def _decode(self, value):
-        return value
+        return self.encoding.decode(val)

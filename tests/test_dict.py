@@ -145,6 +145,15 @@ class BaseTest(object):
         self.assertTrue('foo' in self.dict)
         self.assertFalse('bar' in self.dict)
 
+    def test_uses_custom_encoding_passed_in(self):
+        class SevenEncoding(object):
+            encode = staticmethod(lambda d: "7")
+            decode = staticmethod(lambda d: d)
+
+        sevens_dict = self.new_dict(encoding=SevenEncoding)
+        sevens_dict['key'] = 'this is not a seven'
+        self.assertEquals('7', sevens_dict.get('key'))
+
 
 class AutoSyncTrueTest(object):
 
@@ -312,17 +321,17 @@ class ZookeeperDictTest(object):
 
 class TestRedisDict(BaseTest, AutoSyncTrueTest, RedisTest, unittest.TestCase):
 
-    def new_dict(self, keyspace=None):
-        return RedisDict(keyspace or self.keyspace, Redis())
+    def new_dict(self, keyspace=None, *args, **kwargs):
+        return RedisDict(keyspace or self.keyspace, Redis(), *args, **kwargs)
 
     def test_persist_saves_to_redis(self):
         self.assertFalse(self.hget('foo'))
         self.dict.persist('foo', 'bar')
-        self.assertEquals(self.dict._decode(self.hget('foo')), 'bar')
+        self.assertEquals(self.dict.encoding.decode(self.hget('foo')), 'bar')
 
     def test_depersist_removes_it_from_redis(self):
         self.dict['foo'] = 'bar'
-        self.assertEquals(self.dict._decode(self.hget('foo')), 'bar')
+        self.assertEquals(self.dict.encoding.decode(self.hget('foo')), 'bar')
         self.dict.depersist('foo')
         self.assertFalse(self.hget('foo'))
 
@@ -347,8 +356,8 @@ class TestRedisDict(BaseTest, AutoSyncTrueTest, RedisTest, unittest.TestCase):
 
 class TestModelDict(BaseTest, AutoSyncTrueTest, ModelDictTest, unittest.TestCase):
 
-    def new_dict(self):
-        return ModelDict(Setting.objects, key_col='key', cache=self.cache)
+    def new_dict(self, *args, **kwargs):
+        return ModelDict(Setting.objects, key_col='key', cache=self.cache, *args, **kwargs)
 
     def test_can_be_constructed_with_return_instances(self):
         instance = ModelDict(Setting.objects, self.cache, return_instances='ri')
@@ -409,8 +418,8 @@ class TestModelDict(BaseTest, AutoSyncTrueTest, ModelDictTest, unittest.TestCase
 
 class TestMemoryDict(BaseTest, AutoSyncTrueTest, unittest.TestCase):
 
-    def new_dict(self):
-        return MemoryDict()
+    def new_dict(self, *args, **kwargs):
+        return MemoryDict(*args, **kwargs)
 
     def test_does_not_pickle_objects_when_set(self):
         obj = object()
@@ -421,23 +430,23 @@ class TestMemoryDict(BaseTest, AutoSyncTrueTest, unittest.TestCase):
 
 class TestZookeeperDict(BaseTest, KazooTestCase, ZookeeperDictTest, unittest.TestCase):
 
-    def new_dict(self):
-        return ZookeeperDict(self.client, self.namespace)
+    def new_dict(self, *args, **kwargs):
+        return ZookeeperDict(self.client, self.namespace, *args, **kwargs)
 
 
 class TestRedisDictManualSync(BaseTest, RedisTest, AutoSyncFalseTest, unittest.TestCase):
 
-    def new_dict(self, keyspace=None):
-        return RedisDict(keyspace or self.keyspace, Redis(), autosync=False)
+    def new_dict(self, keyspace=None, *args, **kwargs):
+        return RedisDict(keyspace or self.keyspace, Redis(), autosync=False, *args, **kwargs)
 
 
 class TestModelDictManualSync(BaseTest, ModelDictTest, AutoSyncFalseTest, unittest.TestCase):
 
-    def new_dict(self):
-        return ModelDict(Setting.objects, key_col='key', cache=self.cache, autosync=False)
+    def new_dict(self, *args, **kwargs):
+        return ModelDict(Setting.objects, key_col='key', cache=self.cache, autosync=False, *args, **kwargs)
 
 
 class TestZookeeperDictManualSync(BaseTest, KazooTestCase, ZookeeperDictTest, unittest.TestCase, ):
 
-    def new_dict(self):
-        return ZookeeperDict(self.client, self.namespace, autosync=False)
+    def new_dict(self, *args, **kwargs):
+        return ZookeeperDict(self.client, self.namespace, autosync=False, *args, **kwargs)

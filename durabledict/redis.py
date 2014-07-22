@@ -19,7 +19,7 @@ class RedisDict(DurableDict):
         self.__touch_last_updated()
 
     def persist(self, key, value):
-        encoded = self._encode(value)
+        encoded = self.encoding.encode(value)
         self.__touch_and_multi(('hset', (self.keyspace, key, encoded)))
 
     def depersist(self, key):
@@ -27,7 +27,7 @@ class RedisDict(DurableDict):
 
     def durables(self):
         encoded = self.conn.hgetall(self.keyspace)
-        tuples = [(k, self._decode(v)) for k, v in encoded.items()]
+        tuples = [(k, self.encoding.decode(v)) for k, v in encoded.items()]
         return dict(tuples)
 
     def last_updated(self):
@@ -38,11 +38,11 @@ class RedisDict(DurableDict):
     # already exist
     def _setdefault(self, key, default=None):
         encoded = self.__touch_and_multi(
-            ('hsetnx', (self.keyspace, key, self._encode(default))),
+            ('hsetnx', (self.keyspace, key, self.encoding.encode(default))),
             ('hget', (self.keyspace, key)),
             returns=-1
         )
-        return self._decode(encoded)
+        return self.encoding.decode(encoded)
 
     def _pop(self, key, default=None):
         last_updated, encoded, key_existed = self.__touch_and_multi(
@@ -51,7 +51,7 @@ class RedisDict(DurableDict):
         )
 
         if key_existed:
-            return self._decode(encoded)
+            return self.encoding.decode(encoded)
         elif default:
             return default
         else:
@@ -67,7 +67,7 @@ class RedisDict(DurableDict):
 
         with self.conn.pipeline() as pipe:
             pipe.incr(self.__last_update_key)
-            [getattr(pipe, function)(*args) for function, args in args]
+            [getattr(pipe, function)(*a) for function, a in args]
             results = pipe.execute()
 
             if kwargs.get('returns'):

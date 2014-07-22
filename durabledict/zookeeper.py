@@ -161,7 +161,7 @@ class ZookeeperDict(DurableDict):
         :param value: Value to store. Encoded before being stored.
         :type value: value
         """
-        encoded = self._encode(value)
+        encoded = self.encoding.encode(value)
         self.__set_or_create(key, encoded)
         self.__increment_last_updated()
 
@@ -188,7 +188,7 @@ class ZookeeperDict(DurableDict):
                 self.__path_of(child),
                 watch=self.__increment_last_updated
             )
-            results[child] = self._decode(value)
+            results[child] = self.encoding.decode(value)
 
         return results
 
@@ -211,7 +211,7 @@ class ZookeeperDict(DurableDict):
         try:
             # We need to both delete and return the value that was in ZK here.
             raw_value, _ = self.zk.retry(self.zk.get, path)
-            value = self._decode(raw_value)
+            value = self.encoding.decode(raw_value)
         except self.no_node_error:
             # The node is already gone, so if a default is given, return it,
             # otherwise, raise KeyError
@@ -273,9 +273,9 @@ class ZookeeperDict(DurableDict):
         try:
             # Try to get and return the existing node with its data
             value, _ = self.zk.retry(self.zk.get, path)
-            return self._decode(value)
+            return self.encoding.decode(value)
         except self.no_node_error:
             # Node does not exist, we have to create it
-            self.zk.retry(self.zk.create, path, self._encode(value))
+            self.zk.retry(self.zk.create, path, self.encoding.encode(value))
             self.__increment_last_updated()
             return value

@@ -65,7 +65,7 @@ class ModelDict(DurableDict):
         instance, created = self.get_or_create(key, val)
 
         if not created and getattr(instance, self.value_col) != val:
-            setattr(instance, self.value_col, self._encode(val))
+            setattr(instance, self.value_col, self.encoding.encode(val))
             instance.save()
 
         self.touch_last_updated()
@@ -82,7 +82,7 @@ class ModelDict(DurableDict):
                 self.key_col,
                 self.value_col
             )
-            return dict((k, self._decode(v)) for k, v in encoded_tuples)
+            return dict((k, self.encoding.decode(v)) for k, v in encoded_tuples)
 
     def _setdefault(self, key, default=None):
         instance, created = self.get_or_create(key, default)
@@ -90,12 +90,12 @@ class ModelDict(DurableDict):
         if created:
             self.touch_last_updated()
 
-        return self._decode(getattr(instance, self.value_col))
+        return self.encoding.decode(getattr(instance, self.value_col))
 
     def _pop(self, key, default=None):
         try:
             instance = self.manager.get(**{self.key_col: key})
-            value = self._decode(getattr(instance, self.value_col))
+            value = self.encoding.decode(getattr(instance, self.value_col))
             instance.delete()
             self.touch_last_updated()
             return value
@@ -107,7 +107,7 @@ class ModelDict(DurableDict):
 
     def get_or_create(self, key, val):
         return self.manager.get_or_create(
-            defaults={self.value_col: self._encode(val)},
+            defaults={self.value_col: self.encoding.encode(val)},
             **{self.key_col: key}
         )
 

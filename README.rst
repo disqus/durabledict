@@ -71,6 +71,19 @@ This causes the dictionary behave in the following way:
 
 A good use case for manual syncing is a read-heavy web application, where you're using a durabledict for settings configuration.  Very few requests actually *change* the dictionary contents - most simply read from the dictionary.  In this situation, you would perhaps only ``sync()`` at the beginning of a user's web request to make sure the dict is up to date, but then not during the request in order to push the response to the user as fast as possible.
 
+Encoding
+--------
+
+All ``durabledict`` implementations accept an ``encoding`` keyword argument, which defines the encoding object the dictionary should use when serializing data to and from the persistent data store.  The overarching goal of the ``encoding`` is to serialize the dictionary value object into a format suitable for persisting to durable storage, and then at a later date reconstructing that object from its serialized representation into an object
+in memory.
+
+By default, `durabledict` uses pickle as its encoding format, which allows it to serialize complex object easily at the expense of `known security implications`:security and other limitations.  See `this IBM Developerworks`:devworks article for an overview of Pickle.
+
+.. security: https://docs.python.org/release/3.0.1/library/pickle.html#pickle-restrict
+.. _devworks: http://www.ibm.com/developerworks/library/l-pypers/
+
+In addition to the built in ``encoding.PickleEncoding``, ``durabledict`` also features ``encoding.JSONEncoding`` which encodes the data as JSON and ``encoding.NoOpEncoding`` which does not encode the data at all (suitable only for the ``MemoryDict`` implementation).
+
 Integration with Django
 ------------------------
 

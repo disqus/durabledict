@@ -1,5 +1,4 @@
-import pickle
-import base64
+from durabledict.encoding import PickleEncoding
 
 
 class DurableDict(object):
@@ -8,12 +7,17 @@ class DurableDict(object):
     created or deleted.  Syncs with data fron the data store before every read,
     unless ``autosync=False`` is passed, which causes the dict to only sync
     data from the data store on writes and when ``sync()`` is called.
+
+    By default, objects are encoded in the durable store using
+    ``encoding.PickleEncoding``, but that can be changed by passing in another
+    encoder in as the ``encoding`` kwarg.
     """
 
-    def __init__(self, autosync=True):
+    def __init__(self, autosync=True, encoding=PickleEncoding):
         self.__dict = dict()
         self.last_synced = 0
         self.autosync = autosync
+        self.encoding = encoding
         self.__sync_with_durable_storage(force=True)
 
     @property
@@ -92,11 +96,3 @@ class DurableDict(object):
 
     def last_updated(self):
         raise NotImplementedError
-
-    def _encode(self, data):
-        pickled = pickle.dumps(data, pickle.HIGHEST_PROTOCOL)
-        return base64.encodestring(pickled)
-
-    def _decode(self, data):
-        pickled = base64.decodestring(data)
-        return pickle.loads(pickled)

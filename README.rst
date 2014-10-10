@@ -87,9 +87,9 @@ In addition to the built in ``encoding.PickleEncoding``, ``durabledict`` also fe
 Integration with Django
 ------------------------
 
-If you would like to store your dict values in the dadatabase for your Django application, you should use the ``durabledict.models.Durabledict`` class.  This class takes an instance of a model's manager, as well as ``key_col`` and ``value_col`` arguments which can be used to tell ``Durabledict`` which columns on your object it should use to store data.
+If you would like to store your dict values in the database for your Django application, you should use the ``durabledict.models.Durabledict`` class.  This class takes an instance of a model's manager, as well as ``key_col`` and ``value_col`` arguments which can be used to tell ``Durabledict`` which columns on your object it should use to store data.
 
-It's also probably most adventageuous to construct your dicts with ``autosync=False`` (see "Manually Control Durable Storage Sync" above) and manually call ``sync()`` before each request.  This can be acomlished most easily via the ``request_started`` signal::
+It's also probably most advantageous to construct your dicts with ``autosync=False`` (see "Manually Control Durable Storage Sync" above) and manually call ``sync()`` before each request.  This can be accomplished most easily via the ``request_started`` signal::
 
         django.core.signals.request_started.connect(settings.sync)
 

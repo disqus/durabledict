@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 import os
 import sys
 
@@ -17,10 +18,6 @@ try:
 except ImportError:
     pass
 
-setup_requires = []
-
-if 'nosetests' in sys.argv[1:]:
-    setup_requires.append('nose')
 
 setup(
     name='durabledict',
@@ -31,9 +28,6 @@ setup(
     description='Dictionary-style access to different types of models.',
     packages=['durabledict'],
     zip_safe=False,
-    setup_requires=[
-        'nose'
-    ],
     tests_require=[
         'Django',
         'nose',

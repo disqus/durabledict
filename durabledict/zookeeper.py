@@ -1,4 +1,4 @@
-from durabledict.base import DurableDict
+from durabledict.base import ConnectionDurableDict
 
 from functools import wraps
 import posixpath
@@ -19,7 +19,8 @@ def validate_key(func):
     return wrapper
 
 
-class ZookeeperDict(DurableDict):
+class ZookeeperDict(ConnectionDurableDict):
+
     """
     Dictionary backed by Zookeeper.  Functions just as you would expect a normal
     dictiony to function, except the values in the dictionary are persisted and
@@ -104,36 +105,34 @@ class ZookeeperDict(DurableDict):
     clients can take time to propogate to other clients.
     """
 
-    def __init__(self, zk, path, *args, **kwargs):
+    def __init__(self, **kwargs):
         """
         Construct a new instance of a ``ZookeeperDict``.
 
-        :param zk: Zookeeper client, likely ``KazooClient``
-        :type zk: KazooClient
-        :param path: The path to the root config node.
-        :type path: string
+        :param connection: Zookeeper client, likely ``KazooClient``
+        :type connection: KazooClient
+        :param keyspace: The path to the root config node.
+        :type keyspace: string
         :param autosync: Sync with Zookeeper before each read.
         :type autosync: bool
         """
-        self.zk = zk
-        self.path = path
+        super(ZookeeperDict, self).__init__(**kwargs)
 
-        if not self.zk.connected:
-            self.zk.start()
+    def connection_hook(self):
+        if not self.connection.connected:
+            self.connection.start()
 
-        self.zk.retry(self.zk.ensure_path, self.path)
+        self.connection.retry(self.connection.ensure_path, self.keyspace)
         self._last_updated = None
 
         # TODO: The base DurableDict class updates last_updated itself
         # manually when adding a new key with __setattr__, as well as this watch
         # also incrementing the value.
-        self.child_watch = self.zk.retry(
-            self.zk.ChildrenWatch,
-            self.path,
+        self.child_watch = self.connection.retry(
+            self.connection.ChildrenWatch,
+            self.keyspace,
             self.__increment_last_updated
         )
-
-        super(ZookeeperDict, self).__init__(*args, **kwargs)
 
     @property
     def no_node_error(self):
@@ -173,7 +172,7 @@ class ZookeeperDict(DurableDict):
         :param key: Key to remove from Zookeeper.
         :type key: string
         """
-        self.zk.retry(self.zk.delete, self.__path_of(key))
+        self.connection.retry(self.connection.delete, self.__path_of(key))
         self.__increment_last_updated()
 
     def durables(self):
@@ -182,9 +181,9 @@ class ZookeeperDict(DurableDict):
         """
         results = dict()
 
-        for child in self.zk.retry(self.zk.get_children, self.path):
-            value, _ = self.zk.retry(
-                self.zk.get,
+        for child in self.connection.retry(self.connection.get_children, self.keyspace):
+            value, _ = self.connection.retry(
+                self.connection.get,
                 self.__path_of(child),
                 watch=self.__increment_last_updated
             )
@@ -210,7 +209,7 @@ class ZookeeperDict(DurableDict):
 
         try:
             # We need to both delete and return the value that was in ZK here.
-            raw_value, _ = self.zk.retry(self.zk.get, path)
+            raw_value, _ = self.connection.retry(self.connection.get, path)
             value = self.encoding.decode(raw_value)
         except self.no_node_error:
             # The node is already gone, so if a default is given, return it,
@@ -224,7 +223,7 @@ class ZookeeperDict(DurableDict):
         # at least by that point in time
         try:
             # Try to delete the node
-            self.zk.retry(self.zk.delete, path)
+            self.connection.retry(self.connection.delete, path)
             self.__increment_last_updated()
         except self.no_node_error:
             # Someone deleted the node in the mean time...how nice!
@@ -246,15 +245,15 @@ class ZookeeperDict(DurableDict):
         Will retry trying to get or create a node based on the "retry" config
         from the Kazoo client.
         """
-        return self.zk.retry(self.__inner_set_default, key, default)
+        return self.connection.retry(self.__inner_set_default, key, default)
 
     def __path_of(self, key):
-        return posixpath.join(self.path, key)
+        return posixpath.join(self.keyspace, key)
 
     def __set_or_create(self, key, value):
         path = self.__path_of(key)
-        self.zk.retry(self.zk.ensure_path, path)
-        self.zk.retry(self.zk.set, path, value)
+        self.connection.retry(self.connection.ensure_path, path)
+        self.connection.retry(self.connection.set, path, value)
 
     def __increment_last_updated(self, children=None):
         if self._last_updated is None:
@@ -272,10 +271,10 @@ class ZookeeperDict(DurableDict):
 
         try:
             # Try to get and return the existing node with its data
-            value, _ = self.zk.retry(self.zk.get, path)
+            value, _ = self.connection.retry(self.connection.get, path)
             return self.encoding.decode(value)
         except self.no_node_error:
             # Node does not exist, we have to create it
-            self.zk.retry(self.zk.create, path, self.encoding.encode(value))
+            self.connection.retry(self.connection.create, path, self.encoding.encode(value))
             self.__increment_last_updated()
             return value

@@ -3,19 +3,19 @@ from durabledict.encoding import NoOpEncoding
 
 
 class MemoryDict(DurableDict):
+
     '''
     Does not actually persist any data to a persistant storage.  Instead, keeps
     everything in memory.  This is really only useful for use in tests
     '''
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, **kwargs):
         self.__storage = dict()
         self.__last_updated = 1
-
         if 'encoding' not in kwargs:
             kwargs['encoding'] = NoOpEncoding
 
-        super(MemoryDict, self).__init__(*args, **kwargs)
+        super(MemoryDict, self).__init__(**kwargs)
 
     def persist(self, key, val):
         self.__storage[key] = self.encoding.encode(val)

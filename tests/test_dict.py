@@ -147,7 +147,7 @@ class BaseTest(object):
 
     def test_uses_custom_encoding_passed_in(self):
         class SevenEncoding(object):
-            encode = staticmethod(lambda d: "7")
+            encode = staticmethod(lambda d: '7')
             decode = staticmethod(lambda d: d)
 
         sevens_dict = self.new_dict(encoding=SevenEncoding)
@@ -197,11 +197,11 @@ class AutoSyncFalseTest(object):
 class RedisTest(object):
 
     def tearDown(self):
-        self.dict.conn.flushdb()
+        self.dict.connection.flushdb()
         super(RedisTest, self).tearDown()
 
     def hget(self, key):
-        return self.dict.conn.hget(self.keyspace, key)
+        return self.dict.connection.hget(self.keyspace, key)
 
     def test_instances_different_keyspaces_do_not_share_last_updated(self):
         self.dict['foo'] = 'bar'
@@ -259,7 +259,7 @@ class ZookeeperDictTest(object):
         yield
 
     def test_other_cluster_in_namespace_does_not_effect_main_one(self):
-        other_dict = ZookeeperDict(self.new_client(), '/durabledict/other')
+        other_dict = ZookeeperDict(keyspace='/durabledict/other', connection=self.new_client())
 
         self.dict['foo'] = 'dict bar'
         self.dict['dictkey'] = 'dict'
@@ -282,7 +282,7 @@ class ZookeeperDictTest(object):
             )
 
     def test_changes_by_one_dict_are_reflected_in_another(self):
-        other_dict = ZookeeperDict(self.new_client(), self.namespace)
+        other_dict = ZookeeperDict(keyspace=self.namespace, connection=self.new_client())
 
         self.assertEquals(other_dict, {})
 
@@ -310,19 +310,19 @@ class ZookeeperDictTest(object):
     def test_starts_the_zk_client_if_not_already_started(self):
         client = mock.Mock(connected=False)
 
-        ZookeeperDict(client, self.namespace)
+        ZookeeperDict(keyspace=self.namespace, connection=client)
         client.start.assert_called_once_with()
 
         client.start.reset_mock()
         client.connected = True
-        ZookeeperDict(client, self.namespace)
+        ZookeeperDict(keyspace=self.namespace, connection=client)
         self.assertFalse(client.start.called)
 
 
 class TestRedisDict(BaseTest, AutoSyncTrueTest, RedisTest, unittest.TestCase):
 
-    def new_dict(self, keyspace=None, *args, **kwargs):
-        return RedisDict(keyspace or self.keyspace, Redis(), *args, **kwargs)
+    def new_dict(self, keyspace=None, **kwargs):
+        return RedisDict(keyspace=(keyspace or self.keyspace), connection=Redis(), **kwargs)
 
     def test_persist_saves_to_redis(self):
         self.assertFalse(self.hget('foo'))
@@ -356,11 +356,11 @@ class TestRedisDict(BaseTest, AutoSyncTrueTest, RedisTest, unittest.TestCase):
 
 class TestModelDict(BaseTest, AutoSyncTrueTest, ModelDictTest, unittest.TestCase):
 
-    def new_dict(self, *args, **kwargs):
-        return ModelDict(Setting.objects, key_col='key', cache=self.cache, *args, **kwargs)
+    def new_dict(self, **kwargs):
+        return ModelDict(manager=Setting.objects, cache=self.cache, key_col='key', **kwargs)
 
     def test_can_be_constructed_with_return_instances(self):
-        instance = ModelDict(Setting.objects, self.cache, return_instances='ri')
+        instance = ModelDict(manager=Setting.objects, cache=self.cache, return_instances='ri')
         self.assertEquals(
             instance.return_instances,
             'ri'
@@ -430,23 +430,23 @@ class TestMemoryDict(BaseTest, AutoSyncTrueTest, unittest.TestCase):
 
 class TestZookeeperDict(BaseTest, KazooTestCase, ZookeeperDictTest, unittest.TestCase):
 
-    def new_dict(self, *args, **kwargs):
-        return ZookeeperDict(self.client, self.namespace, *args, **kwargs)
+    def new_dict(self, **kwargs):
+        return ZookeeperDict(keyspace=self.namespace, connection=self.client, **kwargs)
 
 
 class TestRedisDictManualSync(BaseTest, RedisTest, AutoSyncFalseTest, unittest.TestCase):
 
-    def new_dict(self, keyspace=None, *args, **kwargs):
-        return RedisDict(keyspace or self.keyspace, Redis(), autosync=False, *args, **kwargs)
+    def new_dict(self, keyspace=None, **kwargs):
+        return RedisDict(keyspace=(keyspace or self.keyspace), connection=Redis(), autosync=False, **kwargs)
 
 
 class TestModelDictManualSync(BaseTest, ModelDictTest, AutoSyncFalseTest, unittest.TestCase):
 
-    def new_dict(self, *args, **kwargs):
-        return ModelDict(Setting.objects, key_col='key', cache=self.cache, autosync=False, *args, **kwargs)
+    def new_dict(self, **kwargs):
+        return ModelDict(manager=Setting.objects, cache=self.cache, key_col='key', autosync=False, **kwargs)
 
 
 class TestZookeeperDictManualSync(BaseTest, KazooTestCase, ZookeeperDictTest, unittest.TestCase, ):
 
-    def new_dict(self, *args, **kwargs):
-        return ZookeeperDict(self.client, self.namespace, autosync=False, *args, **kwargs)
+    def new_dict(self, **kwargs):
+        return ZookeeperDict(keyspace=self.namespace, connection=self.client, autosync=False, **kwargs)

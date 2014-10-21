@@ -2,16 +2,29 @@
 
 import os
 import sys
-
+import glob
 from setuptools import setup
 
-ZOOKEEPER_PATHS = {
-    'darwin': '/usr/local/Cellar/zookeeper/3.4.5/libexec/',  # assume homebrew
-    'linux2': '/usr/share/java/',
-}
 
-if sys.platform in ZOOKEEPER_PATHS:
-    os.environ.setdefault('ZOOKEEPER_PATH', ZOOKEEPER_PATHS[sys.platform])
+def get_zookeeper_paths():
+    zk_path = None
+
+    if sys.platform == 'darwin':
+        homebrew_path = glob.glob('/usr/local/Cellar/zookeeper/*/libexec/')
+        if homebrew_path:
+            zk_path = homebrew_path[0]
+    elif sys.platform == 'linux2':
+        linux_default = '/usr/share/java/'
+        if os.path.exists(linux_default):
+            zk_path = linux_default
+
+    if zk_path:
+        return zk_path
+
+    raise Exception('ZOOKEEPER_PATH must be in environment for tests to run')
+
+if 'ZOOKEEPER_PATH' not in os.environ:
+    os.environ['ZOOKEEPER_PATH'] = get_zookeeper_paths()
 
 try:
     import multiprocessing  # Seems to fix http://bugs.python.org/issue15881
@@ -21,7 +34,7 @@ except ImportError:
 
 setup(
     name='durabledict',
-    version='0.8.0',
+    version='0.9.0',
     author='DISQUS',
     author_email='opensource@disqus.com',
     url='http://github.com/disqus/durabledict/',

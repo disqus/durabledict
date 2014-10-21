@@ -2,6 +2,7 @@ from durabledict.encoding import PickleEncoding
 
 
 class DurableDict(object):
+
     """
     Dictionary that calls out to its persistant data store when items are
     created or deleted.  Syncs with data fron the data store before every read,
@@ -96,3 +97,19 @@ class DurableDict(object):
 
     def last_updated(self):
         raise NotImplementedError
+
+
+class ConnectionDurableDict(DurableDict):
+
+    """Base for Durable Dict classes that are connection oriented."""
+
+    def __init__(self, keyspace=None, connection=None, **kwargs):
+        self.keyspace = keyspace
+        self.connection = connection
+
+        self.connection_hook()
+
+        super(ConnectionDurableDict, self).__init__(**kwargs)
+
+    def connection_hook(self):
+        pass

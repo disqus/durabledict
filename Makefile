@@ -4,10 +4,10 @@ test:
 	python setup.py test
 
 release:
-	git tag $(VERSION)
+	-git tag $(VERSION)
 	git push origin $(VERSION)
 	git push origin master
-	python setup.py sdist upload
+	python2.6 setup.py sdist upload --repository ${PYPI}
 
 watch:
 	bundle exec guard

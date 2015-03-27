@@ -1,8 +1,7 @@
-from durabledict.encoding import PickleEncoding
+from durabledict.encoding import DefaultEncoding, EncodingError, DecodingError
 
 
 class DurableDict(object):
-
     """
     Dictionary that calls out to its persistant data store when items are
     created or deleted.  Syncs with data fron the data store before every read,
@@ -12,13 +11,16 @@ class DurableDict(object):
     By default, objects are encoded in the durable store using
     ``encoding.PickleEncoding``, but that can be changed by passing in another
     encoder in as the ``encoding`` kwarg.
+
+    If you need to switch between two encodings provide the old_encoding as a fallback.
     """
 
-    def __init__(self, autosync=True, encoding=PickleEncoding):
+    def __init__(self, autosync=True, encoding=DefaultEncoding, old_encoding=None):
         self.__dict = dict()
         self.last_synced = 0
         self.autosync = autosync
         self.encoding = encoding
+        self.old_encoding = old_encoding
         self.__sync_with_durable_storage(force=True)
 
     @property
@@ -86,6 +88,25 @@ class DurableDict(object):
             self.__dict = self.durables()
             self.last_synced = cache_expired_at
 
+    def _encode(self, val):
+        try:
+            return self.encoding.encode(val)
+        except EncodingError:
+            if self.old_encoding:
+                return self.old_encoding.encode(val)
+            else:
+                raise
+
+    def _decode(self, val):
+        try:
+            return self.encoding.encode(val)
+        except EncodingError:
+            if self.old_encoding:
+                return self.old_encoding.encode(val)
+            else:
+                raise
+
+
     def persist(self, key, val):
         raise NotImplementedError
 
@@ -100,7 +121,6 @@ class DurableDict(object):
 
 
 class ConnectionDurableDict(DurableDict):
-
     """Base for Durable Dict classes that are connection oriented."""
 
     def __init__(self, keyspace=None, connection=None, **kwargs):

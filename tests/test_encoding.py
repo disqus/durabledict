@@ -1,16 +1,18 @@
 # coding=utf-8
 
 import unittest
+from mock import Mock
 
 from durabledict.encoding import (
     NoOpEncoding,
     PickleEncoding,
-    JSONEncoding
+    JSONEncoding,
+    EncodingError,
+    DecodingError,
 )
 
 
 class EncodingTest(object):
-
     def cycle(self, data):
         return self.encoding.decode(self.encoding.encode(data))
 
@@ -22,9 +24,21 @@ class EncodingTest(object):
         #      compatable dict here.
         self.assertEqual({"1": 2}, self.cycle({"1": 2}))
 
+    def test_raises_encoding_and_decoding_errors(self):
+        data = Mock(side_effect=KeyError('hi'))
+
+        with self.assertRaises(EncodingError):
+            self.encoding.encode(data)
+
+        with self.assertRaises(DecodingError):
+            self.encoding.decode(data)
+
 
 class NoOpEncodingTest(EncodingTest, unittest.TestCase):
     encoding = NoOpEncoding
+    
+    def test_raises_encoding_and_decoding_errors(self):
+        pass
 
 
 class PickleEncodingTest(EncodingTest, unittest.TestCase):

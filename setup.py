@@ -23,6 +23,7 @@ def get_zookeeper_paths():
 
     raise Exception('ZOOKEEPER_PATH must be in environment for tests to run')
 
+
 if 'ZOOKEEPER_PATH' not in os.environ:
     os.environ['ZOOKEEPER_PATH'] = get_zookeeper_paths()
 
@@ -31,10 +32,9 @@ try:
 except ImportError:
     pass
 
-
 setup(
     name='durabledict',
-    version='0.9.0',
+    version='0.9.1',
     author='DISQUS',
     author_email='opensource@disqus.com',
     url='http://github.com/disqus/durabledict/',

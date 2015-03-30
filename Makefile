@@ -3,7 +3,7 @@ VERSION = $(shell python setup.py --version)
 test:
 	python setup.py test
 
-release:
+release: test
 	-git tag $(VERSION)
 	git push origin $(VERSION)
 	git push origin master

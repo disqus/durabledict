@@ -14,8 +14,8 @@ class RedisDict(ConnectionDurableDict):
         >>> 'bar' #doctest: +SKIP
     """
 
-    def __init__(self, **kwargs):
-        super(RedisDict, self).__init__(**kwargs)
+    def __init__(self, *args, **kwargs):
+        super(RedisDict, self).__init__(*args, **kwargs)
         self.__touch_last_updated()
 
     def persist(self, key, value):

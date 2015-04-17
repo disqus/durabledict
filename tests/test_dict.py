@@ -353,6 +353,9 @@ class TestRedisDict(BaseTest, AutoSyncTrueTest, RedisTest, unittest.TestCase):
                                     self.dict.persist, 'foo', 'bar')
             self.assertFalse(self.hget('foo'))
 
+    def test_can_instantiate_without_keywords(self):
+        RedisDict(self.keyspace, Redis())
+
 
 class TestModelDict(BaseTest, AutoSyncTrueTest, ModelDictTest, unittest.TestCase):
 

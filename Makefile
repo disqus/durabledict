@@ -12,4 +12,7 @@ release: test
 watch:
 	bundle exec guard
 
+recorder/test_results/xunit:
+	mkdir -p recorder/test_results/xunit
+
 .PHONY: test release watch

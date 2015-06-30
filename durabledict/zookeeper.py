@@ -105,7 +105,7 @@ class ZookeeperDict(ConnectionDurableDict):
     clients can take time to propogate to other clients.
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, *args, **kwargs):
         """
         Construct a new instance of a ``ZookeeperDict``.
 
@@ -116,7 +116,7 @@ class ZookeeperDict(ConnectionDurableDict):
         :param autosync: Sync with Zookeeper before each read.
         :type autosync: bool
         """
-        super(ZookeeperDict, self).__init__(**kwargs)
+        super(ZookeeperDict, self).__init__(*args, **kwargs)
 
     def connection_hook(self):
         if not self.connection.connected:

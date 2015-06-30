@@ -56,6 +56,7 @@ class ModelDict(DurableDict):
         key_col='key',
         value_col='value',
         return_instances=False,
+        *args,
         **kwargs
     ):
         self.manager = manager
@@ -67,7 +68,7 @@ class ModelDict(DurableDict):
 
         self.cache.add(self.cache_key, 1)  # Only adds if key does not exist
 
-        super(ModelDict, self).__init__(**kwargs)
+        super(ModelDict, self).__init__(*args, **kwargs)
 
     def persist(self, key, val):
         instance, created = self.get_or_create(key, val)

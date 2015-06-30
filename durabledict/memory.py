@@ -9,13 +9,11 @@ class MemoryDict(DurableDict):
     everything in memory.  This is really only useful for use in tests
     '''
 
-    def __init__(self, **kwargs):
+    def __init__(self, autosync=True, encoding=NoOpEncoding, *args, **kwargs):
         self.__storage = dict()
         self.__last_updated = 1
-        if 'encoding' not in kwargs:
-            kwargs['encoding'] = NoOpEncoding
 
-        super(MemoryDict, self).__init__(**kwargs)
+        super(MemoryDict, self).__init__(autosync, encoding, *args, **kwargs)
 
     def persist(self, key, val):
         self.__storage[key] = self.encoding.encode(val)

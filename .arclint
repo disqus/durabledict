@@ -1,0 +1,30 @@
+
+{
+  "linters" : {
+    "flake8" : {
+      "type" : "flake8",
+      "include" : "(\\.py$)",
+      "exclude" : "(^.git/|^ci/|/vendor/$)",
+      "severity.rules" : {
+        "(^(W292|W391|E501|W602))" : "disabled"
+      }
+    },
+    "filename" : {
+      "type" : "filename",
+      "include" : "(.*)"
+    },
+    "text" : {
+      "type" : "text",
+      "include" : "(\\.txt$)",
+      "text.max-line-length": 1000
+    },
+    "nolint" : {
+      "type" : "nolint",
+      "include" : "(.*)"
+    },
+    "generated" : {
+      "type" : "generated",
+      "include" : "(.*)"
+    }
+  }
+}

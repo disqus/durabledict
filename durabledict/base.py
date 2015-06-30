@@ -1,4 +1,7 @@
-from durabledict.encoding import DefaultEncoding, EncodingError, DecodingError
+from durabledict.encoding import (
+    DefaultEncoding,
+    EncodingError,
+)
 
 
 class DurableDict(object):
@@ -106,7 +109,6 @@ class DurableDict(object):
             else:
                 raise
 
-
     def persist(self, key, val):
         raise NotImplementedError
 
@@ -123,13 +125,13 @@ class DurableDict(object):
 class ConnectionDurableDict(DurableDict):
     """Base for Durable Dict classes that are connection oriented."""
 
-    def __init__(self, keyspace=None, connection=None, **kwargs):
+    def __init__(self, keyspace, connection, *args, **kwargs):
         self.keyspace = keyspace
         self.connection = connection
 
         self.connection_hook()
 
-        super(ConnectionDurableDict, self).__init__(**kwargs)
+        super(ConnectionDurableDict, self).__init__(*args, **kwargs)
 
     def connection_hook(self):
         pass

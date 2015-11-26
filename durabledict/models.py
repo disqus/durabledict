@@ -1,4 +1,4 @@
-from base import DurableDict
+from durabledict.base import DurableDict
 
 
 class ModelDict(DurableDict):

@@ -1,4 +1,4 @@
-from base import ConnectionDurableDict
+from durabledict.base import ConnectionDurableDict
 
 
 class RedisDict(ConnectionDurableDict):

@@ -13,7 +13,7 @@ except ImportError:
 
 setup(
     name='durabledict',
-    version='0.9.2',
+    version='0.9.3',
     author='DISQUS',
     author_email='opensource@disqus.com',
     url='http://github.com/disqus/durabledict/',

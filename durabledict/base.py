@@ -70,9 +70,14 @@ class DurableDict(object):
         self.__sync_with_durable_storage()
         return self.__dict.__len__()
 
+    # NOTE: This function is unused in python 3 and should be removed.
     def __cmp__(self, other):
         self.__sync_with_durable_storage()
         return self.__dict.__cmp__(other)
+
+    def __eq__(self, other):
+        self.__sync_with_durable_storage()
+        return self.__dict == other
 
     def __repr__(self):
         return self.__dict.__repr__()

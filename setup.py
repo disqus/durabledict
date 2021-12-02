@@ -21,7 +21,7 @@ setup(
     packages=['durabledict'],
     zip_safe=False,
     tests_require=[
-        'Django<1.8',
+        'Django<1.7',
         'nose',
         'mock',
         'redis',

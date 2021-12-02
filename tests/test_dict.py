@@ -12,7 +12,7 @@ from contextlib import contextmanager
 import django.core.management
 from django.core.cache.backends.locmem import LocMemCache
 
-from kazoo.testing.harness import KazooTestCase
+from kazoo.client import KazooClient
 
 import threading
 import thread
@@ -239,7 +239,7 @@ class ZookeeperDictTest(object):
         event.set()
 
     def new_client(self):
-        client = self._get_client()
+        client = KazooClient(hosts='zookeeper:2181')
         client.start()
         return client
 
@@ -322,7 +322,7 @@ class ZookeeperDictTest(object):
 class TestRedisDict(BaseTest, AutoSyncTrueTest, RedisTest, unittest.TestCase):
 
     def new_dict(self, keyspace=None, **kwargs):
-        return RedisDict(keyspace=(keyspace or self.keyspace), connection=Redis(), **kwargs)
+        return RedisDict(keyspace=(keyspace or self.keyspace), connection=Redis(host='redis'), **kwargs)
 
     def test_persist_saves_to_redis(self):
         self.assertFalse(self.hget('foo'))
@@ -354,7 +354,7 @@ class TestRedisDict(BaseTest, AutoSyncTrueTest, RedisTest, unittest.TestCase):
             self.assertFalse(self.hget('foo'))
 
     def test_can_instantiate_without_keywords(self):
-        RedisDict(self.keyspace, Redis())
+        RedisDict(self.keyspace, Redis(host='redis'))
 
 
 class TestModelDict(BaseTest, AutoSyncTrueTest, ModelDictTest, unittest.TestCase):
@@ -431,16 +431,21 @@ class TestMemoryDict(BaseTest, AutoSyncTrueTest, unittest.TestCase):
         self.assertEquals(self.dict.values(), [obj])
 
 
-class TestZookeeperDict(BaseTest, KazooTestCase, ZookeeperDictTest, unittest.TestCase):
+class TestZookeeperDict(BaseTest, ZookeeperDictTest, unittest.TestCase):
 
     def new_dict(self, **kwargs):
-        return ZookeeperDict(keyspace=self.namespace, connection=self.client, **kwargs)
+        client = KazooClient(hosts='zookeeper:2181')
+        client.start()
+        client.delete(self.namespace, recursive=True)
+        return ZookeeperDict(keyspace=self.namespace, connection=client, **kwargs)
+
+
 
 
 class TestRedisDictManualSync(BaseTest, RedisTest, AutoSyncFalseTest, unittest.TestCase):
 
     def new_dict(self, keyspace=None, **kwargs):
-        return RedisDict(keyspace=(keyspace or self.keyspace), connection=Redis(), autosync=False, **kwargs)
+        return RedisDict(keyspace=(keyspace or self.keyspace), connection=Redis(host='redis'), autosync=False, **kwargs)
 
 
 class TestModelDictManualSync(BaseTest, ModelDictTest, AutoSyncFalseTest, unittest.TestCase):
@@ -449,7 +454,10 @@ class TestModelDictManualSync(BaseTest, ModelDictTest, AutoSyncFalseTest, unitte
         return ModelDict(manager=Setting.objects, cache=self.cache, key_col='key', autosync=False, **kwargs)
 
 
-class TestZookeeperDictManualSync(BaseTest, KazooTestCase, ZookeeperDictTest, unittest.TestCase, ):
+class TestZookeeperDictManualSync(BaseTest, ZookeeperDictTest, unittest.TestCase, ):
 
     def new_dict(self, **kwargs):
-        return ZookeeperDict(keyspace=self.namespace, connection=self.client, autosync=False, **kwargs)
+        client = KazooClient(hosts='zookeeper:2181')
+        client.start()
+        client.delete(self.namespace, recursive=True)
+        return ZookeeperDict(keyspace=self.namespace, connection=client, autosync=False, **kwargs)

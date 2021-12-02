@@ -1,0 +1,15 @@
+version: '3'
+services:
+
+  python:
+    image: python:2.7
+    command: sleep infinity
+    working_dir: /app
+    volumes:
+      - .:/app
+
+  zookeeper:
+    image: zookeeper:3.7
+
+  redis:
+    image: redis:6.2

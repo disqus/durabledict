@@ -1,6 +1,7 @@
 ----------------
 Durabledict
 ----------------
+![Github CI](https://github.com/disqus/durabledict/workflows/CI/badge.svg)
 
 Durabledict contains a collection of dictionary classes backed by a durable data store (Redis, Django models, etc) suitable for use in a distributed manner.  Dictionary values are cached locally in the instance of the dictionary, and only sync with their values with their durable data stores when a value in the data store has changed.
 

@@ -14,4 +14,4 @@ jobs:
     - name: Run
       run: docker-compose up -d
     - name: Test
-      run: docker-compose exec python make test
+      run: docker-compose exec -T python make test
